@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 1;
+const STATE_VERSION = 1.01;
 const STORAGE_KEY = "timeleft-state";
 
 function saveState(state) {
