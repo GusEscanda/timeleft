@@ -2,35 +2,55 @@
 // Storage
 // ================================
 
-const STORAGE_KEY = "processTimeEstimatorState";
+const STATE_VERSION = 1;
+const STORAGE_KEY = "timeleft-state";
 
 function saveState(state) {
-    const serializableState = {
-        startDate: state.startDate.toISOString(),
-        lastMeasurementDate: state.lastMeasurementDate.toISOString(),
-        totalSteps: state.totalSteps,
-        completedSteps: state.completedSteps
+    const payload = {
+        version: STATE_VERSION,
+        state: {
+            startDate: state.startDate.toISOString(),
+            lastMeasurementDate: state.lastMeasurementDate.toISOString(),
+            totalSteps: state.totalSteps,
+            completedSteps: state.completedSteps
+        }
     };
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(serializableState));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
 }
 
-function loadState() {
+function createDefaultState() {
+    const now = new Date();
+
+    return {
+        startDate: now,
+        lastMeasurementDate: now,
+        totalSteps: 100,
+        completedSteps: 0
+    };
+}
+
+function loadOrInitState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-        return null;
+        return createDefaultState();
     }
 
     try {
-        const data = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+
+        if (parsed.version !== STATE_VERSION) {
+            return createDefaultState();
+        }
+
         return {
-            startDate: new Date(data.startDate),
-            lastMeasurementDate: new Date(data.lastMeasurementDate),
-            totalSteps: Number(data.totalSteps),
-            completedSteps: Number(data.completedSteps)
+            startDate: new Date(parsed.state.startDate),
+            lastMeasurementDate: new Date(parsed.state.lastMeasurementDate),
+            totalSteps: parsed.state.totalSteps,
+            completedSteps: parsed.state.completedSteps
         };
     } catch {
-        return null;
+        return createDefaultState();
     }
 }
 
@@ -38,16 +58,7 @@ function loadState() {
 // State
 // ================================
 
-const nowAtLoad = new Date();
-
-const defaultState = {
-    startDate: new Date(nowAtLoad),
-    lastMeasurementDate: new Date(nowAtLoad),
-    totalSteps: 100,
-    completedSteps: 0
-};
-
-const state = loadState() ?? defaultState;
+const state = loadOrInitState();
 
 // ================================
 // Pure logic
@@ -139,6 +150,7 @@ function renderDateTime(containerId, date) {
 
 function render() {
     const estimation = calculateEstimation(state);
+    saveState(state);
 
     if (!estimation) {
         document.getElementById("elapsedDuration").textContent = "-";
@@ -193,33 +205,28 @@ function syncInputsFromState() {
 
 startDateInput.addEventListener("change", () => {
     state.startDate = new Date(startDateInput.value);
-    saveState(state);
     render();
 });
 
 totalStepsInput.addEventListener("input", () => {
     state.totalSteps = Number(totalStepsInput.value);
-    saveState(state);
     render();
 });
 
 completedStepsInput.addEventListener("input", () => {
     state.completedSteps = Number(completedStepsInput.value);
     state.lastMeasurementDate = new Date();
-    saveState(state);
     render();
 });
 
 setStartNowButton.addEventListener("click", () => {
     state.startDate = new Date();
     syncInputsFromState();
-    saveState(state);
     render();
 });
 
 measureNowButton.addEventListener("click", () => {
     state.lastMeasurementDate = new Date();
-    saveState(state);
     render();
 });
 
