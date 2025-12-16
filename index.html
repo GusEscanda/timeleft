@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Process Time Estimator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        /* ---------- Reset ---------- */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ---------- Layout ---------- */
+
+        .app {
+            width: 360px;
+            min-height: 100vh;
+            background-color: white;
+            padding: 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.6fr 1.2fr;
+            row-gap: 12px;
+            column-gap: 8px;
+            align-items: baseline; /* 🔹 key change */
+        }
+
+        /* ---------- Text ---------- */
+
+        .label {
+            font-weight: 600;
+        }
+
+        .number,
+        .datetime,
+        .duration {
+            text-align: right;
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1.1;
+        }
+
+        /* ---------- DateTime ---------- */
+
+        .datetime {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .datetime .time {
+            font-size: 1rem;
+        }
+
+        .datetime .date {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        /* ---------- Duration ---------- */
+
+        .duration {
+            white-space: nowrap;
+        }
+
+        .duration::before {
+            content: "⏱ ";
+            opacity: 0.7;
+        }
+
+        /* ---------- Semantics ---------- */
+
+        .measured {
+            opacity: 1;
+        }
+
+        .estimated {
+            opacity: 0.7;
+        }
+
+        /* ---------- Inputs ---------- */
+
+        input,
+        button {
+            min-width: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <div class="grid">
+
+        <div class="label">Start</div>
+        <button id="setStartNowButton">Now</button>
+        <input id="startDateInput" type="datetime-local" step="1">
+
+        <div class="label">Total</div>
+        <input id="totalStepsInput" type="number" min="1">
+        <div id="totalDuration" class="duration estimated"></div>
+
+        <div class="label">Completed</div>
+        <input id="completedStepsInput" type="number" min="0">
+        <div id="elapsedDuration" class="duration measured"></div>
+
+        <div class="label">Last measurement</div>
+        <button id="measureNowButton">Now</button>
+        <div id="lastMeasurementDate" class="datetime measured">
+            <div class="time"></div>
+            <div class="date"></div>
+        </div>
+
+        <div class="label">Remaining</div>
+        <div id="remainingSteps" class="number estimated"></div>
+        <div id="remainingDuration" class="duration estimated"></div>
+
+        <div class="label">Estimated end</div>
+        <div></div>
+        <div id="estimatedEndDate" class="datetime estimated">
+            <div class="time"></div>
+            <div class="date"></div>
+        </div>
+
+    </div>
+</div>
+
+<script src="app.js"></script>
+
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>
