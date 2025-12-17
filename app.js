@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 1.01;
+const STATE_VERSION = 1.03;
 const STORAGE_KEY = "timeleft-state";
 
 function saveState(state) {
@@ -102,7 +102,7 @@ function calculateEstimation(state) {
 // ================================
 
 function formatDuration(ms) {
-    if (ms < 0) return "-";
+    if (ms < 0) return "⏱ —";
 
     const totalSeconds = Math.floor(ms / 1000);
     const seconds = totalSeconds % 60;
@@ -112,20 +112,32 @@ function formatDuration(ms) {
 
     const pad = (n) => String(n).padStart(2, "0");
 
-    return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+    return `⏱ ${hours}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-function toLocalDateTimeInputValue(date) {
+function formatDateForInput(date) {
     const pad = (n) => String(n).padStart(2, "0");
 
     return (
         date.getFullYear() + "-" +
         pad(date.getMonth() + 1) + "-" +
-        pad(date.getDate()) + "T" +
+        pad(date.getDate())
+    );
+}
+
+function formatTimeForInput(date) {
+    const pad = (n) => String(n).padStart(2, "0");
+
+    return (
         pad(date.getHours()) + ":" +
         pad(date.getMinutes()) + ":" +
         pad(date.getSeconds())
     );
+}
+
+function combineDateAndTime(dateStr, timeStr) {
+    if (!dateStr || !timeStr) return null;
+    return new Date(`${dateStr}T${timeStr}`);
 }
 
 // ================================
@@ -153,10 +165,10 @@ function render() {
     saveState(state);
 
     if (!estimation) {
-        document.getElementById("elapsedDuration").textContent = "-";
-        document.getElementById("totalDuration").textContent = "-";
+        document.getElementById("elapsedDuration").textContent = "⏱ —";
+        document.getElementById("totalDuration").textContent = "⏱ —";
         document.getElementById("remainingSteps").textContent = "-";
-        document.getElementById("remainingDuration").textContent = "-";
+        document.getElementById("remainingDuration").textContent = "⏱ —";
         renderDateTime("lastMeasurementDate", null);
         renderDateTime("estimatedEndDate", null);
         return;
@@ -183,6 +195,8 @@ function render() {
 // ================================
 
 const startDateInput = document.getElementById("startDateInput");
+const startTimeInput = document.getElementById("startTimeInput");
+
 const totalStepsInput = document.getElementById("totalStepsInput");
 const completedStepsInput = document.getElementById("completedStepsInput");
 
@@ -194,9 +208,24 @@ const measureNowButton = document.getElementById("measureNowButton");
 // ================================
 
 function syncInputsFromState() {
-    startDateInput.value = toLocalDateTimeInputValue(state.startDate);
+    startDateInput.value = formatDateForInput(state.startDate);
+    startTimeInput.value = formatTimeForInput(state.startDate);
+
     totalStepsInput.value = state.totalSteps;
     completedStepsInput.value = state.completedSteps;
+}
+
+function updateStartDateFromInputs() {
+    const combined = combineDateAndTime(
+        startDateInput.value,
+        startTimeInput.value
+    );
+
+    if (!combined || isNaN(combined)) {
+        return;
+    }
+
+    state.startDate = combined;
 }
 
 // ================================
@@ -204,7 +233,12 @@ function syncInputsFromState() {
 // ================================
 
 startDateInput.addEventListener("change", () => {
-    state.startDate = new Date(startDateInput.value);
+    updateStartDateFromInputs();
+    render();
+});
+
+startTimeInput.addEventListener("change", () => {
+    updateStartDateFromInputs();
     render();
 });
 
@@ -220,7 +254,9 @@ completedStepsInput.addEventListener("input", () => {
 });
 
 setStartNowButton.addEventListener("click", () => {
-    state.startDate = new Date();
+    const now = new Date();
+    state.startDate = now;
+    state.lastMeasurementDate = now;
     syncInputsFromState();
     render();
 });
@@ -236,3 +272,5 @@ measureNowButton.addEventListener("click", () => {
 
 syncInputsFromState();
 render();
+
+document.getElementById("appVersion").textContent = STATE_VERSION;
