@@ -9,10 +9,9 @@
     <link rel="icon" href="./favicon.ico">
 
     <style>
-        /* ---------- Reset / base ---------- */
-        * {
-            box-sizing: border-box;
-        }
+        /* =========================================================
+           THEME / VARIABLES
+        ========================================================= */
 
         :root {
             --bg: #f5f5f5;
@@ -32,6 +31,14 @@
             }
         }
 
+        /* =========================================================
+           RESET / BASE
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: system-ui, sans-serif;
@@ -41,7 +48,10 @@
             justify-content: center;
         }
 
-        /* ---------- App container ---------- */
+        /* =========================================================
+           LAYOUT
+        ========================================================= */
+
         .app {
             width: 100%;
             max-width: 420px;
@@ -52,115 +62,6 @@
             gap: 20px;
         }
 
-        /* ---------- Header ---------- */
-        .header {
-            text-align: center;
-        }
-
-        .title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-top: 4px;
-        }
-
-        /* ---------- Main highlight ---------- */
-
-        .estimated-end {
-            min-height: 72px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .highlight {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px 20px;
-            text-align: center;
-        }
-
-        .highlight .datetime .time {
-            font-size: 2.4rem;
-            font-weight: 600;
-        }
-
-        .highlight .datetime .date {
-            font-size: 0.9rem;
-        }
-
-
-        .highlight-label {
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-bottom: 8px;
-        }
-
-        .highlight-value {
-            font-family: monospace;
-            font-size: 2.4rem;
-            font-weight: 600;
-        }
-
-        .remaining {
-            text-align: center;
-        }
-
-        .remaining-duration {
-            font-family: monospace;
-            font-size: 1.8rem;
-            margin-top: 4px;
-        }
-
-        .remaining-steps {
-            font-family: monospace;
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-        .remaining-steps .unit {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-left: 4px;
-        }
-
-        /* ---------- DateTime ---------- */
-        .datetime {
-            margin-top: 8px;
-            line-height: 1.1;
-        }
-
-        .datetime .time {
-            font-family: monospace;
-            font-size: 1.2rem;
-        }
-
-        .datetime .date {
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-
-        .muted {
-            color: var(--muted);
-            font-size: 0.85rem;
-        }
-
-        .field {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .field label {
-            font-weight: 600;
-        }
-
-        /* ---------- Sections ---------- */
         .section {
             background: var(--card-bg);
             border-radius: 12px;
@@ -181,6 +82,120 @@
             font-weight: 600;
         }
 
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .header {
+            text-align: center;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* =========================================================
+           MAIN HIGHLIGHT (ETA)
+        ========================================================= */
+
+        .highlight {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 20px;
+            text-align: center;
+        }
+
+        .highlight-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .estimated-end {
+            min-height: 72px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* =========================================================
+           DATETIME BLOCK
+        ========================================================= */
+
+        .datetime {
+            margin-top: 8px;
+            line-height: 1.1;
+        }
+
+        .datetime .time {
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        .datetime .date {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        /* Variante grande usada en el highlight */
+        .highlight .datetime .time {
+            font-size: 2.4rem;
+            font-weight: 600;
+        }
+
+        .highlight .datetime .date {
+            font-size: 0.9rem;
+        }
+
+        /* =========================================================
+           REMAINING
+        ========================================================= */
+
+        .remaining {
+            text-align: center;
+        }
+
+        .remaining-duration {
+            font-family: monospace;
+            font-size: 1.8rem;
+            margin-top: 4px;
+        }
+
+        .remaining-steps {
+            font-family: monospace;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .remaining-steps .unit {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-left: 4px;
+        }
+
+        /* =========================================================
+           FORM / INPUTS
+        ========================================================= */
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field label {
+            font-weight: 600;
+        }
+
         input,
         button {
             font-size: 1rem;
@@ -195,12 +210,24 @@
             cursor: pointer;
         }
 
+        /* =========================================================
+           UTILITIES
+        ========================================================= */
+
         .mono {
             font-family: monospace;
             text-align: right;
         }
 
-        /* ---------- Footer ---------- */
+        .muted {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
         .footer {
             margin-top: auto;
             text-align: center;
@@ -209,13 +236,16 @@
             padding: 8px 0;
         }
 
-        /* ---------- Responsive ---------- */
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
         @media (min-width: 600px) {
             .app {
                 padding: 24px;
             }
 
-            .highlight-value {
+            .highlight .datetime .time {
                 font-size: 2.8rem;
             }
         }
@@ -231,7 +261,7 @@
         <div class="subtitle">ETA Calculator</div>
     </header>
 
-    <!-- Estimated end (main focus) -->
+    <!-- Estimated end -->
     <section class="highlight">
         <div class="highlight-label">Estimated end</div>
         <div id="estimatedEndDate" class="datetime estimated-end">
@@ -249,7 +279,7 @@
             <span class="unit">steps</span>
         </div>
     </section>
-    
+
     <!-- Inputs -->
     <section class="section">
 
@@ -295,7 +325,6 @@
 </div>
 
 <script src="app.js"></script>
-
 <script>
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js");

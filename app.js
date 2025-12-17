@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 1.03;
+const STATE_VERSION = 0.04;
 const STORAGE_KEY = "timeleft-state";
 
 function saveState(state) {
@@ -25,7 +25,7 @@ function createDefaultState() {
     return {
         startDate: now,
         lastMeasurementDate: now,
-        totalSteps: 100,
+        totalSteps: 1,
         completedSteps: 0
     };
 }
