@@ -157,32 +157,6 @@
         }
 
         /* =========================================================
-           REMAINING
-        ========================================================= */
-
-        .remaining {
-            text-align: center;
-        }
-
-        .remaining-duration {
-            font-family: monospace;
-            font-size: 1.8rem;
-            margin-top: 4px;
-        }
-
-        .remaining-steps {
-            font-family: monospace;
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-
-        .remaining-steps .unit {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-left: 4px;
-        }
-
-        /* =========================================================
            FORM / INPUTS
         ========================================================= */
 
@@ -217,6 +191,7 @@
         .mono {
             font-family: monospace;
             text-align: right;
+            white-space: nowrap;
         }
 
         .muted {
@@ -270,16 +245,6 @@
         </div>
     </section>
 
-    <!-- Remaining -->
-    <section class="section remaining">
-        <div class="highlight-label">Remaining</div>
-        <div id="remainingDuration" class="remaining-duration">⏱ —</div>
-        <div id="remainingSteps" class="remaining-steps">
-            <span class="value">—</span>
-            <span class="unit">steps</span>
-        </div>
-    </section>
-
     <!-- Inputs -->
     <section class="section">
 
@@ -293,27 +258,36 @@
             <input id="startTimeInput" type="time" step="1">
         </div>
 
-        <div class="field">
+        <div class="row">
             <label>Total steps</label>
             <input id="totalStepsInput" type="number" min="1">
-            <div id="totalDuration" class="mono muted">⏱ —</div>
-        </div>
-
-        <div class="field">
-            <label>Completed</label>
-            <input id="completedStepsInput" type="number" min="0">
-            <div id="elapsedDuration" class="mono muted">⏱ —</div>
+            <div id="totalDuration" class="mono">⏱ —</div>
         </div>
 
         <div class="row">
-            <label>Last measurement</label>
+            <label>Completed</label>
+            <input id="completedStepsInput" type="number" min="0">
+            <div id="elapsedDuration" class="mono">⏱ —</div>
+        </div>
+
+        <div class="row">
+            <label>Last <br> measurement</label>
+            <div id="lastMeasurementDate" class="datetime">
+                <div class="time">—</div>
+                <div class="date">—</div>
+            </div>
             <button id="measureNowButton">Now</button>
         </div>
 
-        <div id="lastMeasurementDate" class="datetime mono">
-            <div class="time">—</div>
-            <div class="date">—</div>
+        <div class="row">
+            <label>Remaining</label>
+            <div id="remainingSteps" class="mono">
+                <span class="value">—</span>
+                <span class="unit">steps</span>
+            </div>
+            <div id="remainingDuration" class="mono">⏱ —</div>
         </div>
+
 
     </section>
 
