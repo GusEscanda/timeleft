@@ -184,6 +184,22 @@
             cursor: pointer;
         }
 
+        /* Desktop default */
+        input[type="range"] {
+            display: none;
+        }
+
+        /* Touch devices (mobile) */
+        @media (pointer: coarse) {
+            input[type="number"] {
+                display: none;
+            }
+
+            input[type="range"] {
+                display: block;
+            }
+        }
+
         /* =========================================================
            UTILITIES
         ========================================================= */
@@ -260,13 +276,15 @@
 
         <div class="row">
             <label>Total steps</label>
-            <input id="totalStepsInput" type="number" min="1">
+            <input id="totalStepsInput" type="number" min="1" max="999999">
+            <input id="totalStepsRange" type="range" min="1" max="999999" step="1">
             <div id="totalDuration" class="mono">⏱ —</div>
         </div>
 
         <div class="row">
             <label>Completed</label>
-            <input id="completedStepsInput" type="number" min="0">
+            <input id="completedStepsInput" type="number" min="1" max="999999">
+            <input id="completedStepsRange" type="range" min="1" max="999999" step="1">
             <div id="elapsedDuration" class="mono">⏱ —</div>
         </div>
 

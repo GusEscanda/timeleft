@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 0.04;
+const STATE_VERSION = 0.10;
 const STORAGE_KEY = "timeleft-state";
 
 function saveState(state) {
@@ -198,7 +198,9 @@ const startDateInput = document.getElementById("startDateInput");
 const startTimeInput = document.getElementById("startTimeInput");
 
 const totalStepsInput = document.getElementById("totalStepsInput");
+const totalStepsRange = document.getElementById("totalStepsRange");
 const completedStepsInput = document.getElementById("completedStepsInput");
+const completedStepsRange = document.getElementById("completedStepsRange");
 
 const setStartNowButton = document.getElementById("setStartNowButton");
 const measureNowButton = document.getElementById("measureNowButton");
@@ -213,6 +215,9 @@ function syncInputsFromState() {
 
     totalStepsInput.value = state.totalSteps;
     completedStepsInput.value = state.completedSteps;
+
+    totalStepsRange.value = state.totalSteps;
+    completedStepsRange.value = state.completedSteps;
 }
 
 function updateStartDateFromInputs() {
@@ -244,11 +249,26 @@ startTimeInput.addEventListener("change", () => {
 
 totalStepsInput.addEventListener("input", () => {
     state.totalSteps = Number(totalStepsInput.value);
+    totalStepsRange.value = state.totalSteps;
+    render();
+});
+
+totalStepsRange.addEventListener("input", () => {
+    state.totalSteps = Number(totalStepsRange.value);
+    totalStepsInput.value = state.totalSteps;
     render();
 });
 
 completedStepsInput.addEventListener("input", () => {
     state.completedSteps = Number(completedStepsInput.value);
+    completedStepsRange.value = state.completedSteps;
+    state.lastMeasurementDate = new Date();
+    render();
+});
+
+completedStepsRange.addEventListener("input", () => {
+    state.completedSteps = Number(completedStepsRange.value);
+    completedStepsInput.value = state.completedSteps;
     state.lastMeasurementDate = new Date();
     render();
 });
