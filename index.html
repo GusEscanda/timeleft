@@ -200,7 +200,7 @@
             }
         }
 
-        .slider-value {
+        .numeric-value {
             display: none;
             text-align: center;
             font-size: 1.4rem;
@@ -209,50 +209,11 @@
 
         /* Touch devices */
         @media (pointer: coarse) {
-            .slider-value {
+            .numeric-value {
                 display: block;
             }
         }
 
-        @media (pointer: coarse) {
-            .row {
-                display: grid;
-                grid-template-columns: auto 1fr auto;
-                grid-template-rows: auto auto;
-                grid-template-areas:
-                    "label value duration"
-                    "label slider duration";
-                column-gap: 8px;
-                row-gap: 6px;
-                align-items: center;
-            }
-
-            .row label {
-                grid-area: label;
-                align-self: center;
-            }
-
-            .row .slider-value {
-                grid-area: value;
-                text-align: center;
-                font-size: 1.4rem;
-            }
-
-            .row input[type="range"] {
-                grid-area: slider;
-            }
-
-            .row input[type="number"] {
-                display: none;
-            }
-
-            .row .duration {
-                grid-area: duration;
-                align-self: center;
-                text-align: right;
-                white-space: nowrap;
-            }
-        }
 
         /* =========================================================
            UTILITIES
@@ -330,18 +291,24 @@
 
         <div class="row">
             <label>Total steps</label>
-            <div id="totalStepsValue" class="slider-value mono">—</div>
+            <div id="totalStepsValue" class="numeric-value mono">—</div>
             <input id="totalStepsInput" type="number" min="1" max="999999">
-            <input id="totalStepsRange" type="range" min="1" max="999999" step="1">
             <div id="totalDuration" class="mono duration">⏱ —</div>
+        </div>
+        
+        <div class="row">
+            <input id="totalStepsRange" type="range" min="1" max="999999" step="1">
         </div>
 
         <div class="row">
             <label>Completed</label>
-            <div id="completedStepsValue" class="slider-value mono">—</div>
+            <div id="completedStepsValue" class="numeric-value mono">—</div>
             <input id="completedStepsInput" type="number" min="1" max="999999">
-            <input id="completedStepsRange" type="range" min="1" max="999999" step="1">
             <div id="elapsedDuration" class="mono duration">⏱ —</div>
+        </div>
+
+        <div class="row">
+            <input id="completedStepsRange" type="range" min="1" max="999999" step="1">
         </div>
 
         <div class="row">
@@ -355,7 +322,7 @@
 
         <div class="row">
             <label>Remaining</label>
-            <div id="remainingSteps" class="mono">
+            <div id="remainingSteps" class="slider-value mono">
                 <span class="value">—</span>
                 <span class="unit">steps</span>
             </div>
