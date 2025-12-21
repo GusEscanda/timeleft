@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 0.35;
+const STATE_VERSION = 0.38;
 const STORAGE_KEY = "timeleft-state";
 
 function saveState(state) {
@@ -25,8 +25,8 @@ function createDefaultState() {
     return {
         startDate: now,
         lastMeasurementDate: now,
-        totalSteps: 1,
-        completedSteps: 1
+        totalSteps: 0,
+        completedSteps: 0
     };
 }
 
@@ -65,45 +65,46 @@ const state = loadOrInitState();
 // ================================
 
 function calculateEstimation(state) {
-    if (state.completedSteps <= 0) {
+    console.log('calculateEstimation', state)
+    try {
+        const isValidState = 
+            state.totalSteps > 0 && 
+            state.completedSteps > 0 && 
+            state.completedSteps < state.totalSteps && 
+            state.startDate < state.lastMeasurementDate;
+
+        if (!isValidState) {
+            return null;
+        }
+
+        const elapsedDurationMs = state.lastMeasurementDate - state.startDate;
+        const totalDurationMs = state.totalSteps * elapsedDurationMs / state.completedSteps;
+        const remainingSteps = state.totalSteps - state.completedSteps;
+        const remainingDurationMs = totalDurationMs - elapsedDurationMs;
+        const estimatedEndDate = new Date(state.lastMeasurementDate.getTime() + remainingDurationMs);
+
+        return {
+            elapsedDurationMs,
+            totalDurationMs,
+            remainingSteps,
+            remainingDurationMs,
+            estimatedEndDate
+        };
+    } catch {
         return null;
     }
-
-    const elapsedDurationMs =
-        state.lastMeasurementDate - state.startDate;
-
-    if (elapsedDurationMs <= 0) {
-        return null;
-    }
-
-    const totalDurationMs =
-        (state.totalSteps * elapsedDurationMs) / state.completedSteps;
-
-    const remainingSteps =
-        state.totalSteps - state.completedSteps;
-
-    const remainingDurationMs =
-        totalDurationMs - elapsedDurationMs;
-
-    const estimatedEndDate =
-        new Date(state.lastMeasurementDate.getTime() + remainingDurationMs);
-
-    return {
-        elapsedDurationMs,
-        totalDurationMs,
-        remainingSteps,
-        remainingDurationMs,
-        estimatedEndDate
-    };
 }
 
 function updateSteps(field, delta) {
+    console.log('updateSteps', field, delta)
     if (field === "total") {
         state.totalSteps = state.totalSteps + delta;
+        state.totalSteps = Math.max(state.totalSteps, 0)
     }
 
     if (field === "completed") {
         state.completedSteps = state.completedSteps + delta;
+        state.completedSteps = Math.max(state.completedSteps, 0)
         state.lastMeasurementDate = new Date();
     }
 
@@ -214,15 +215,15 @@ const startTimeInput = document.getElementById("startTimeInput");
 
 const totalStepsValue = document.getElementById("totalStepsValue")
 const totalStepsInput = document.getElementById("totalStepsInput");
-const addTotalSteps = document.getElementById("addTotalSteps");
-const subTotalSteps = document.getElementById("subTotalSteps");
-const resetTotalSteps = document.getElementById("resetTotalSteps");
+const addTotalStepsButton = document.getElementById("addTotalStepsButton");
+const subTotalStepsButton = document.getElementById("subTotalStepsButton");
+const resetTotalStepsButton = document.getElementById("resetTotalStepsButton");
 const incTotalSteps = document.getElementById("incTotalSteps");
 const completedStepsValue = document.getElementById("completedStepsValue");
 const completedStepsInput = document.getElementById("completedStepsInput");
-const addCompletedSteps = document.getElementById("addCompletedSteps");
-const subCompletedSteps = document.getElementById("subCompletedSteps");
-const resetCompletedSteps = document.getElementById("resetCompletedSteps");
+const addCompletedStepsButton = document.getElementById("addCompletedStepsButton");
+const subCompletedStepsButton = document.getElementById("subCompletedStepsButton");
+const resetCompletedStepsButton = document.getElementById("resetCompletedStepsButton");
 const incCompletedSteps = document.getElementById("incCompletedSteps");
 
 const setStartNowButton = document.getElementById("setStartNowButton");
@@ -310,46 +311,46 @@ completedStepsInput.addEventListener("input", () => {
     render();
 });
 
-addTotalSteps.addEventListener("click", () => {
+addTotalStepsButton.addEventListener("click", () => {
     updateSteps("total", Number(incTotalSteps.value));
 });
 
-attachRepeatingPress(addTotalSteps, () =>
+attachRepeatingPress(addTotalStepsButton, () =>
     updateSteps("total", Number(incTotalSteps.value))
 );
 
-subTotalSteps.addEventListener("click", () => {
-    updateSteps("total", -Number(incTotalSteps.value));
+subTotalStepsButton.addEventListener("click", () => {
+    updateSteps("total", - Number(incTotalSteps.value));
 });
 
-attachRepeatingPress(subTotalSteps, () =>
-    updateSteps("total", -Number(incTotalSteps.value))
+attachRepeatingPress(subTotalStepsButton, () =>
+    updateSteps("total", - Number(incTotalSteps.value))
 );
 
-resetTotalSteps.addEventListener("click", () => {
-    state.totalSteps = 1;
+resetTotalStepsButton.addEventListener("click", () => {
+    state.totalSteps = 0;
     syncInputsFromState();
     render();
 });
 
-addCompletedSteps.addEventListener("click", () => {
+addCompletedStepsButton.addEventListener("click", () => {
     updateSteps("completed", Number(incCompletedSteps.value));
 });
 
-attachRepeatingPress(addCompletedSteps, () =>
+attachRepeatingPress(addCompletedStepsButton, () =>
     updateSteps("completed", Number(incCompletedSteps.value))
 );
 
-subCompletedSteps.addEventListener("click", () => {
-    updateSteps("completed", -Number(incCompletedSteps.value));
+subCompletedStepsButton.addEventListener("click", () => {
+    updateSteps("completed", - Number(incCompletedSteps.value));
 });
 
-attachRepeatingPress(addCompletedSteps, () =>
-    updateSteps("completed", -Number(incCompletedSteps.value))
+attachRepeatingPress(subCompletedStepsButton, () =>
+    updateSteps("completed", - Number(incCompletedSteps.value))
 );
 
-resetCompletedSteps.addEventListener("click", () => {
-    state.completedSteps = 1;
+resetCompletedStepsButton.addEventListener("click", () => {
+    state.completedSteps = 0;
     syncInputsFromState();
     render();
 });
