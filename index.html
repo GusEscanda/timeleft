@@ -214,6 +214,46 @@
             }
         }
 
+        @media (pointer: coarse) {
+            .row {
+                display: grid;
+                grid-template-columns: auto 1fr auto;
+                grid-template-rows: auto auto;
+                grid-template-areas:
+                    "label value duration"
+                    "label slider duration";
+                column-gap: 8px;
+                row-gap: 6px;
+                align-items: center;
+            }
+
+            .row label {
+                grid-area: label;
+                align-self: center;
+            }
+
+            .row .slider-value {
+                grid-area: value;
+                text-align: center;
+                font-size: 1.4rem;
+            }
+
+            .row input[type="range"] {
+                grid-area: slider;
+            }
+
+            .row input[type="number"] {
+                display: none;
+            }
+
+            .row .duration {
+                grid-area: duration;
+                align-self: center;
+                text-align: right;
+                white-space: nowrap;
+            }
+        }
+
         /* =========================================================
            UTILITIES
         ========================================================= */
@@ -293,7 +333,7 @@
             <div id="totalStepsValue" class="slider-value mono">—</div>
             <input id="totalStepsInput" type="number" min="1" max="999999">
             <input id="totalStepsRange" type="range" min="1" max="999999" step="1">
-            <div id="totalDuration" class="mono">⏱ —</div>
+            <div id="totalDuration" class="mono duration">⏱ —</div>
         </div>
 
         <div class="row">
@@ -301,7 +341,7 @@
             <div id="completedStepsValue" class="slider-value mono">—</div>
             <input id="completedStepsInput" type="number" min="1" max="999999">
             <input id="completedStepsRange" type="range" min="1" max="999999" step="1">
-            <div id="elapsedDuration" class="mono">⏱ —</div>
+            <div id="elapsedDuration" class="mono duration">⏱ —</div>
         </div>
 
         <div class="row">
