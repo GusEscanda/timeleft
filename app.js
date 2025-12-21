@@ -65,7 +65,6 @@ const state = loadOrInitState();
 // ================================
 
 function calculateEstimation(state) {
-    console.log('calculateEstimation', state)
     try {
         const isValidState = 
             state.totalSteps > 0 && 
@@ -96,20 +95,18 @@ function calculateEstimation(state) {
 }
 
 function updateSteps(field, delta) {
-    console.log('updateSteps', field, delta)
     if (field === "total") {
         state.totalSteps = state.totalSteps + delta;
         state.totalSteps = Math.max(state.totalSteps, 0)
+        state.totalSteps = Math.max(state.totalSteps, state.completedSteps)
     }
 
     if (field === "completed") {
         state.completedSteps = state.completedSteps + delta;
         state.completedSteps = Math.max(state.completedSteps, 0)
+        state.completedSteps = Math.min(state.completedSteps, state.totalSteps)
         state.lastMeasurementDate = new Date();
     }
-
-    syncInputsFromState();
-    render();
 }
 
 
@@ -263,19 +260,25 @@ function updateStartDateFromInputs() {
 
 function attachRepeatingPress(button, callback, intervalMs = 150) {
     let timer = null;
+    let fired = false;
 
-    const start = () => {
-        callback();
+    const start = (e) => {
+        e.preventDefault();
+        fired = true;
+        callback(); // single press
         timer = setInterval(callback, intervalMs);
     };
 
     const stop = () => {
-        clearInterval(timer);
-        timer = null;
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+        fired = false;
     };
 
     button.addEventListener("mousedown", start);
-    button.addEventListener("touchstart", start);
+    button.addEventListener("touchstart", start, { passive: false });
 
     button.addEventListener("mouseup", stop);
     button.addEventListener("mouseleave", stop);
@@ -299,58 +302,53 @@ startTimeInput.addEventListener("change", () => {
 totalStepsInput.addEventListener("input", () => {
     const value = Number(totalStepsInput.value);
     state.totalSteps = value;
-    totalStepsValue.textContent = value;
+    syncInputsFromState();
     render();
 });
 
 completedStepsInput.addEventListener("input", () => {
     const value = Number(completedStepsInput.value);
     state.completedSteps = value;
-    completedStepsValue.textContent = value;
     state.lastMeasurementDate = new Date();
-    render();
-});
-
-addTotalStepsButton.addEventListener("click", () => {
-    updateSteps("total", Number(incTotalSteps.value));
-});
-
-attachRepeatingPress(addTotalStepsButton, () =>
-    updateSteps("total", Number(incTotalSteps.value))
-);
-
-subTotalStepsButton.addEventListener("click", () => {
-    updateSteps("total", - Number(incTotalSteps.value));
-});
-
-attachRepeatingPress(subTotalStepsButton, () =>
-    updateSteps("total", - Number(incTotalSteps.value))
-);
-
-resetTotalStepsButton.addEventListener("click", () => {
-    state.totalSteps = 0;
     syncInputsFromState();
     render();
 });
 
-addCompletedStepsButton.addEventListener("click", () => {
+attachRepeatingPress(addTotalStepsButton, () => {
+    updateSteps("total", Number(incTotalSteps.value));
+    syncInputsFromState();
+    render();
+});
+
+attachRepeatingPress(subTotalStepsButton, () => {
+    updateSteps("total", - Number(incTotalSteps.value));
+    syncInputsFromState();
+    render();
+});
+
+resetTotalStepsButton.addEventListener("click", () => {
+    state.totalSteps = 0;
+    state.completedSteps = 0;
+    state.lastMeasurementDate = new Date();
+    syncInputsFromState();
+    render();
+});
+
+attachRepeatingPress(addCompletedStepsButton, () => {
     updateSteps("completed", Number(incCompletedSteps.value));
+    syncInputsFromState();
+    render();
 });
 
-attachRepeatingPress(addCompletedStepsButton, () =>
-    updateSteps("completed", Number(incCompletedSteps.value))
-);
-
-subCompletedStepsButton.addEventListener("click", () => {
+attachRepeatingPress(subCompletedStepsButton, () => {
     updateSteps("completed", - Number(incCompletedSteps.value));
+    syncInputsFromState();
+    render();
 });
-
-attachRepeatingPress(subCompletedStepsButton, () =>
-    updateSteps("completed", - Number(incCompletedSteps.value))
-);
 
 resetCompletedStepsButton.addEventListener("click", () => {
     state.completedSteps = 0;
+    state.lastMeasurementDate = new Date();
     syncInputsFromState();
     render();
 });
@@ -365,6 +363,7 @@ setStartNowButton.addEventListener("click", () => {
 
 measureNowButton.addEventListener("click", () => {
     state.lastMeasurementDate = new Date();
+    syncInputsFromState();
     render();
 });
 
