@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 0.38;
+const STATE_VERSION = 0.4;
 const STORAGE_KEY = "timeleft-state";
 
 function saveState(state) {
@@ -258,23 +258,41 @@ function updateStartDateFromInputs() {
 // Autorepeat helper
 // ================================
 
-function attachRepeatingPress(button, callback, intervalMs = 150) {
-    let timer = null;
-    let fired = false;
+function attachRepeatingPress(
+    button,
+    callback,
+    {
+        initialDelay = 400,   // starts slowly
+        repeatDelay = 200,    // initial repeat rate
+        minDelay = 60,        // maximum speed
+        acceleration = 0.85  // acceleration factor
+    } = {}
+) {
+    let timeoutId = null;
+    let currentDelay = repeatDelay;
+
+    const step = () => {
+        callback();
+        currentDelay = Math.max(minDelay, currentDelay * acceleration);
+        timeoutId = setTimeout(step, currentDelay);
+    };
 
     const start = (e) => {
         e.preventDefault();
-        fired = true;
-        callback(); // single press
-        timer = setInterval(callback, intervalMs);
+
+        // reset speed for each press
+        currentDelay = repeatDelay;
+
+        // immediate first action
+        callback();
+
+        // start repeating after the initial delay
+        timeoutId = setTimeout(step, initialDelay);
     };
 
     const stop = () => {
-        if (timer) {
-            clearInterval(timer);
-            timer = null;
-        }
-        fired = false;
+        clearTimeout(timeoutId);
+        timeoutId = null;
     };
 
     button.addEventListener("mousedown", start);
