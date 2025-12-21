@@ -197,8 +197,10 @@ function render() {
 const startDateInput = document.getElementById("startDateInput");
 const startTimeInput = document.getElementById("startTimeInput");
 
+const totalStepsValue = document.getElementById("totalStepsValue")
 const totalStepsInput = document.getElementById("totalStepsInput");
 const totalStepsRange = document.getElementById("totalStepsRange");
+const completedStepsValue = document.getElementById("completedStepsValue");
 const completedStepsInput = document.getElementById("completedStepsInput");
 const completedStepsRange = document.getElementById("completedStepsRange");
 
@@ -212,6 +214,9 @@ const measureNowButton = document.getElementById("measureNowButton");
 function syncInputsFromState() {
     startDateInput.value = formatDateForInput(state.startDate);
     startTimeInput.value = formatTimeForInput(state.startDate);
+
+    totalStepsValue.textContent = state.totalSteps;
+    completedStepsValue.textContent = state.completedSteps;
 
     totalStepsInput.value = state.totalSteps;
     completedStepsInput.value = state.completedSteps;
@@ -248,27 +253,35 @@ startTimeInput.addEventListener("change", () => {
 });
 
 totalStepsInput.addEventListener("input", () => {
-    state.totalSteps = Number(totalStepsInput.value);
-    totalStepsRange.value = state.totalSteps;
+    const value = Number(totalStepsInput.value);
+    state.totalSteps = value;
+    totalStepsRange.value = value;
+    totalStepsValue.textContent = value;
     render();
 });
 
 totalStepsRange.addEventListener("input", () => {
-    state.totalSteps = Number(totalStepsRange.value);
-    totalStepsInput.value = state.totalSteps;
+    const value = Number(totalStepsRange.value);
+    state.totalSteps = value;
+    totalStepsInput.value = value;
+    totalStepsValue.textContent = value;
     render();
 });
 
 completedStepsInput.addEventListener("input", () => {
-    state.completedSteps = Number(completedStepsInput.value);
-    completedStepsRange.value = state.completedSteps;
+    const value = Number(completedStepsInput.value);
+    state.completedSteps = value;
+    completedStepsRange.value = value;
+    completedStepsValue.textContent = value;
     state.lastMeasurementDate = new Date();
     render();
 });
 
 completedStepsRange.addEventListener("input", () => {
-    state.completedSteps = Number(completedStepsRange.value);
-    completedStepsInput.value = state.completedSteps;
+    const value = Number(completedStepsRange.value);
+    state.completedSteps = value;
+    completedStepsInput.value = value;
+    completedStepsValue.textContent = value;
     state.lastMeasurementDate = new Date();
     render();
 });

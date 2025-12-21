@@ -200,6 +200,20 @@
             }
         }
 
+        .slider-value {
+            display: none;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        /* Touch devices */
+        @media (pointer: coarse) {
+            .slider-value {
+                display: block;
+            }
+        }
+
         /* =========================================================
            UTILITIES
         ========================================================= */
@@ -276,6 +290,7 @@
 
         <div class="row">
             <label>Total steps</label>
+            <div id="totalStepsValue" class="slider-value mono">—</div>
             <input id="totalStepsInput" type="number" min="1" max="999999">
             <input id="totalStepsRange" type="range" min="1" max="999999" step="1">
             <div id="totalDuration" class="mono">⏱ —</div>
@@ -283,6 +298,7 @@
 
         <div class="row">
             <label>Completed</label>
+            <div id="completedStepsValue" class="slider-value mono">—</div>
             <input id="completedStepsInput" type="number" min="1" max="999999">
             <input id="completedStepsRange" type="range" min="1" max="999999" step="1">
             <div id="elapsedDuration" class="mono">⏱ —</div>
