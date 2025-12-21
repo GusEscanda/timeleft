@@ -82,6 +82,11 @@
             font-weight: 600;
         }
 
+        .row.controls {
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
         /* =========================================================
            HEADER
         ========================================================= */
@@ -182,6 +187,11 @@
 
         button {
             cursor: pointer;
+        }
+
+        button,
+        select {
+            touch-action: manipulation;
         }
 
         /* Desktop default */
@@ -296,9 +306,10 @@
             <div id="totalDuration" class="mono duration">⏱ —</div>
         </div>
 
-        <div class="row">
-            <button id="addTotalSteps">+</button> /
-            <button id="subTotalSteps">-</button> 
+        <div class="row controls">
+            <button id="addTotalSteps">+</button>
+            <button id="subTotalSteps">-</button>
+            <button id="resetTotalSteps">⟲</button>
             <select id="incTotalSteps">
                 <option>     1</option>
                 <option>     5</option>
@@ -321,9 +332,10 @@
             <div id="elapsedDuration" class="mono duration">⏱ —</div>
         </div>
 
-        <div class="row">
-            <button id="addCompletedSteps">+</button> /
-            <button id="subCompletedSteps">-</button> 
+        <div class="row controls">
+            <button id="addCompletedSteps">+</button>
+            <button id="subCompletedSteps">-</button>
+            <button id="resetCompletedSteps">⟲</button>
             <select id="incCompletedSteps">
                 <option>     1</option>
                 <option>     5</option>

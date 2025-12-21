@@ -216,11 +216,13 @@ const totalStepsValue = document.getElementById("totalStepsValue")
 const totalStepsInput = document.getElementById("totalStepsInput");
 const addTotalSteps = document.getElementById("addTotalSteps");
 const subTotalSteps = document.getElementById("subTotalSteps");
+const resetTotalSteps = document.getElementById("resetTotalSteps");
 const incTotalSteps = document.getElementById("incTotalSteps");
 const completedStepsValue = document.getElementById("completedStepsValue");
 const completedStepsInput = document.getElementById("completedStepsInput");
 const addCompletedSteps = document.getElementById("addCompletedSteps");
 const subCompletedSteps = document.getElementById("subCompletedSteps");
+const resetCompletedSteps = document.getElementById("resetCompletedSteps");
 const incCompletedSteps = document.getElementById("incCompletedSteps");
 
 const setStartNowButton = document.getElementById("setStartNowButton");
@@ -252,6 +254,31 @@ function updateStartDateFromInputs() {
     }
 
     state.startDate = combined;
+}
+
+// ================================
+// Autorepeat helper
+// ================================
+
+function attachRepeatingPress(button, callback, intervalMs = 150) {
+    let timer = null;
+
+    const start = () => {
+        callback();
+        timer = setInterval(callback, intervalMs);
+    };
+
+    const stop = () => {
+        clearInterval(timer);
+        timer = null;
+    };
+
+    button.addEventListener("mousedown", start);
+    button.addEventListener("touchstart", start);
+
+    button.addEventListener("mouseup", stop);
+    button.addEventListener("mouseleave", stop);
+    button.addEventListener("touchend", stop);
 }
 
 // ================================
@@ -287,16 +314,44 @@ addTotalSteps.addEventListener("click", () => {
     updateSteps("total", Number(incTotalSteps.value));
 });
 
+attachRepeatingPress(addTotalSteps, () =>
+    updateSteps("total", Number(incTotalSteps.value))
+);
+
 subTotalSteps.addEventListener("click", () => {
     updateSteps("total", -Number(incTotalSteps.value));
+});
+
+attachRepeatingPress(subTotalSteps, () =>
+    updateSteps("total", -Number(incTotalSteps.value))
+);
+
+resetTotalSteps.addEventListener("click", () => {
+    state.totalSteps = 1;
+    syncInputsFromState();
+    render();
 });
 
 addCompletedSteps.addEventListener("click", () => {
     updateSteps("completed", Number(incCompletedSteps.value));
 });
 
+attachRepeatingPress(addCompletedSteps, () =>
+    updateSteps("completed", Number(incCompletedSteps.value))
+);
+
 subCompletedSteps.addEventListener("click", () => {
     updateSteps("completed", -Number(incCompletedSteps.value));
+});
+
+attachRepeatingPress(addCompletedSteps, () =>
+    updateSteps("completed", -Number(incCompletedSteps.value))
+);
+
+resetCompletedSteps.addEventListener("click", () => {
+    state.completedSteps = 1;
+    syncInputsFromState();
+    render();
 });
 
 setStartNowButton.addEventListener("click", () => {
