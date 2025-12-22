@@ -180,7 +180,7 @@ function render() {
     if (!estimation) {
         document.getElementById("elapsedDuration").textContent = "⏱ —";
         document.getElementById("totalDuration").textContent = "⏱ —";
-        document.querySelector("#remainingSteps .value").textContent = "—";
+        document.getElementById("remainingSteps").textContent = "—";
         document.getElementById("remainingDuration").textContent = "⏱ —";
         renderDateTime("lastMeasurementDate", null);
         renderDateTime("estimatedEndDate", null);
