@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <title>TimeLeft — ETA Calculator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
     <link rel="icon" href="./favicon.ico">
 
     <style>
         /* =========================================================
-           THEME / VARIABLES
+           THEME VARIABLES
         ========================================================= */
 
         :root {
@@ -19,6 +20,7 @@
             --text: #111;
             --muted: #666;
             --accent: #1f6feb;
+            --radius: 12px;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -42,14 +44,14 @@
         body {
             margin: 0;
             font-family: system-ui, sans-serif;
-            background: linear-gradient(180deg, var(--bg), #00000000);
+            background: linear-gradient(180deg, var(--bg), transparent);
             color: var(--text);
             display: flex;
             justify-content: center;
         }
 
         /* =========================================================
-           LAYOUT
+           APP LAYOUT
         ========================================================= */
 
         .app {
@@ -62,19 +64,52 @@
             gap: 20px;
         }
 
-        .section {
+        .section,
+        .highlight {
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: var(--radius);
+        }
+
+        .section {
             padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
+        .highlight {
+            padding: 12px 20px;
+            text-align: center;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .header {
+            text-align: center;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            margin-top: 4px;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        /* =========================================================
+           ROWS / STRUCTURE
+        ========================================================= */
+
         .row {
             display: flex;
-            gap: 8px;
             align-items: center;
+            gap: 8px;
         }
 
         .row label {
@@ -88,179 +123,8 @@
         }
 
         /* =========================================================
-           HEADER
+           METRICS (value + duration)
         ========================================================= */
-
-        .header {
-            text-align: center;
-        }
-
-        .title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-top: 4px;
-        }
-
-        /* =========================================================
-           MAIN HIGHLIGHT (ETA)
-        ========================================================= */
-
-        .highlight {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px 20px;
-            text-align: center;
-        }
-
-        .highlight-label {
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-bottom: 8px;
-        }
-
-        .estimated-end {
-            min-height: 72px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
-        }
-
-        /* =========================================================
-           DATETIME BLOCK
-        ========================================================= */
-
-        .datetime {
-            margin-top: 8px;
-            line-height: 1.1;
-        }
-
-        .datetime .time {
-            font-family: monospace;
-            font-size: 1.2rem;
-        }
-
-        .datetime .date {
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-
-        /* Variante grande usada en el highlight */
-        .highlight .datetime .time {
-            font-size: 2.4rem;
-            font-weight: 600;
-        }
-
-        .highlight .datetime .date {
-            font-size: 0.9rem;
-        }
-
-        /* =========================================================
-           FORM / INPUTS
-        ========================================================= */
-
-        .field {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .field label {
-            font-weight: 600;
-        }
-
-        input,
-        button {
-            font-size: 1rem;
-            padding: 8px;
-        }
-
-        input {
-            width: 100%;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        button,
-        select {
-            touch-action: manipulation;
-        }
-
-        /* Desktop default */
-        input[type="range"] {
-            display: none;
-        }
-
-        /* Touch devices (mobile) */
-        @media (pointer: coarse) {
-            input[type="number"] {
-                display: none;
-            }
-
-            input[type="range"] {
-                display: block;
-            }
-        }
-
-        .numeric-value {
-            display: none;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-
-        /* Touch devices */
-        @media (pointer: coarse) {
-            .numeric-value {
-                display: block;
-            }
-        }
-
-        .value-primary {
-            font-family: monospace;
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-
-        .unit {
-            font-size: 0.9rem;   /* mismo tamaño que labels */
-            color: var(--muted);
-            margin-left: 4px;
-        }
-
-        .control {
-            height: 36px;
-            min-width: 36px;
-            padding: 0 10px;
-
-            font-size: 1rem;
-            line-height: 1;
-
-            border-radius: 8px;
-            border: 1px solid var(--muted);
-            background: var(--card-bg);
-            color: var(--text);
-        }
-
-        .steps-value {
-            font-family: monospace;
-            font-size: 1.4rem;
-            font-weight: 600;
-            text-align: right;
-            line-height: 1.2;
-        }
-
-        input.steps-value {
-            padding-right: 6px;
-        }
 
         .metric-row {
             display: flex;
@@ -273,12 +137,118 @@
             font-family: monospace;
             font-size: 1.4rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .metric-duration {
             font-family: monospace;
+            font-size: 1.4rem;
             opacity: 0.8;
             white-space: nowrap;
+        }
+
+        /* =========================================
+        Desktop default (keyboard / mouse)
+        ========================================= */
+
+        .metric-value {
+            display: none;
+        }
+
+        input[type="number"] {
+            display: block;
+        }
+
+        /* Remaining is display-only: always visible */
+        #remainingSteps {
+            display: block !important;
+        }
+
+        /* =========================================
+        Mobile / touch devices
+        ========================================= */
+
+        @media (pointer: coarse) {
+            .metric-value {
+                display: block;
+            }
+
+            input[type="number"] {
+                display: none;
+            }
+        }
+
+        /* =========================================================
+           DATETIME
+        ========================================================= */
+
+        .datetime {
+            line-height: 1.1;
+        }
+
+        .datetime .time {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .datetime .date {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        /* Highlight variant */
+        .estimated-end {
+            min-height: 72px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .highlight .datetime .time {
+            font-size: 2.4rem;
+        }
+
+        .highlight .datetime .date {
+            font-size: 0.9rem;
+        }
+
+        /* =========================================================
+           FORM CONTROLS
+        ========================================================= */
+
+        input,
+        button,
+        select {
+            font-size: 1rem;
+            padding: 8px;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        .control {
+            height: 36px;
+            min-width: 36px;
+            padding: 0 10px;
+
+            border-radius: 8px;
+            border: 1px solid var(--muted);
+            background: var(--card-bg);
+            color: var(--text);
+
+            font-size: 1rem;
+            line-height: 1;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .steps-input {
+            font-family: monospace;
+            font-size: 1.4rem;
+            text-align: right;
+            padding-right: 6px;
         }
 
         /* =========================================================
@@ -287,13 +257,10 @@
 
         .mono {
             font-family: monospace;
-            text-align: right;
-            white-space: nowrap;
         }
 
         .muted {
             color: var(--muted);
-            font-size: 0.85rem;
         }
 
         /* =========================================================
@@ -323,6 +290,7 @@
         }
     </style>
 </head>
+
 <body>
 
 <div class="app">
@@ -335,7 +303,7 @@
 
     <!-- Estimated end -->
     <section class="highlight">
-        <div class="highlight-label">Estimated end</div>
+        <div class="muted">Estimated end</div>
         <div id="estimatedEndDate" class="datetime estimated-end">
             <div class="time">—</div>
             <div class="date">—</div>
@@ -357,9 +325,9 @@
 
         <div class="metric-row">
             <label>Total steps</label>
-            <div id="totalStepsValue" class="metric-value mono value-primary">—</div>
-            <input id="totalStepsInput" class="steps-value" type="number" min="1" max="999999">
-            <div id="totalDuration" class="mono metric-duration value-primary">⏱ —</div>
+            <div id="totalStepsValue" class="metric-value">—</div>
+            <input id="totalStepsInput" class="steps-input" type="number" min="1" max="999999">
+            <div id="totalDuration" class="metric-duration">⏱ —</div>
         </div>
 
         <div class="row controls">
@@ -367,25 +335,25 @@
             <button id="subTotalStepsButton" class="control">-</button>
             <button id="resetTotalStepsButton" class="control">⟲</button>
             <select id="incTotalSteps" class="control">
-                <option>     1</option>
-                <option>     5</option>
-                <option>    10</option>
-                <option>    50</option>
-                <option>   100</option>
-                <option>   500</option>
-                <option>  1000</option>
-                <option>  5000</option>
-                <option> 10000</option>
-                <option> 50000</option>
+                <option>1</option>
+                <option>5</option>
+                <option>10</option>
+                <option>50</option>
+                <option>100</option>
+                <option>500</option>
+                <option>1000</option>
+                <option>5000</option>
+                <option>10000</option>
+                <option>50000</option>
                 <option>100000</option>
             </select>
         </div>
 
         <div class="metric-row">
             <label>Completed</label>
-            <div id="completedStepsValue" class="metric-value mono value-primary">—</div>
-            <input id="completedStepsInput" class="steps-value" type="number" min="1" max="999999">
-            <div id="elapsedDuration" class="mono metric-duration value-primary">⏱ —</div>
+            <div id="completedStepsValue" class="metric-value">—</div>
+            <input id="completedStepsInput" class="steps-input" type="number" min="1" max="999999">
+            <div id="elapsedDuration" class="metric-duration">⏱ —</div>
         </div>
 
         <div class="row controls">
@@ -393,23 +361,23 @@
             <button id="subCompletedStepsButton" class="control">-</button>
             <button id="resetCompletedStepsButton" class="control">⟲</button>
             <select id="incCompletedSteps" class="control">
-                <option>     1</option>
-                <option>     5</option>
-                <option>    10</option>
-                <option>    50</option>
-                <option>   100</option>
-                <option>   500</option>
-                <option>  1000</option>
-                <option>  5000</option>
-                <option> 10000</option>
-                <option> 50000</option>
+                <option>1</option>
+                <option>5</option>
+                <option>10</option>
+                <option>50</option>
+                <option>100</option>
+                <option>500</option>
+                <option>1000</option>
+                <option>5000</option>
+                <option>10000</option>
+                <option>50000</option>
                 <option>100000</option>
             </select>
         </div>
 
         <div class="row">
-            <label>Last <br> measurement</label>
-            <div id="lastMeasurementDate" class="datetime value-primary">
+            <label>Last<br>measurement</label>
+            <div id="lastMeasurementDate" class="datetime">
                 <div class="time">—</div>
                 <div class="date">—</div>
             </div>
@@ -418,17 +386,12 @@
 
         <div class="metric-row">
             <label>Remaining</label>
-            <div id="remainingSteps" class="metric-value mono value-primary">
-                <span class="value">—</span>
-                <span class="unit"></span>
-            </div>
-            <div id="remainingDuration" class="mono metric-duration value-primary">⏱ —</div>
+            <div id="remainingSteps" class="metric-value">—</div>
+            <div id="remainingDuration" class="metric-duration">⏱ —</div>
         </div>
-
 
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         Version <span id="appVersion">0.01</span>
     </footer>

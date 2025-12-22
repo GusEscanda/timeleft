@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 0.43;
+const STATE_VERSION = 0.6;
 const STORAGE_KEY = "timeleft-state";
 
 function saveState(state) {
@@ -193,7 +193,7 @@ function render() {
     document.getElementById("elapsedDuration").textContent =
         formatDuration(estimation.elapsedDurationMs);
 
-    document.querySelector("#remainingSteps .value").textContent =
+    document.getElementById("remainingSteps").textContent =
         estimation.remainingSteps;
 
     document.getElementById("remainingDuration").textContent =
