@@ -262,6 +262,24 @@
             padding-right: 6px;
         }
 
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .metric-value {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .metric-duration {
+            font-family: monospace;
+            opacity: 0.8;
+            white-space: nowrap;
+        }
 
         /* =========================================================
            UTILITIES
@@ -337,11 +355,11 @@
             <input id="startTimeInput" type="time" step="1">
         </div>
 
-        <div class="row">
+        <div class="metric-row">
             <label>Total steps</label>
-            <div id="totalStepsValue" class="numeric-value mono value-primary">—</div>
+            <div id="totalStepsValue" class="metric-value mono value-primary">—</div>
             <input id="totalStepsInput" class="steps-value" type="number" min="1" max="999999">
-            <div id="totalDuration" class="mono duration value-primary">⏱ —</div>
+            <div id="totalDuration" class="mono metric-duration value-primary">⏱ —</div>
         </div>
 
         <div class="row controls">
@@ -363,11 +381,11 @@
             </select>
         </div>
 
-        <div class="row">
+        <div class="metric-row">
             <label>Completed</label>
-            <div id="completedStepsValue" class="numeric-value mono value-primary">—</div>
+            <div id="completedStepsValue" class="metric-value mono value-primary">—</div>
             <input id="completedStepsInput" class="steps-value" type="number" min="1" max="999999">
-            <div id="elapsedDuration" class="mono duration value-primary">⏱ —</div>
+            <div id="elapsedDuration" class="mono metric-duration value-primary">⏱ —</div>
         </div>
 
         <div class="row controls">
@@ -398,13 +416,13 @@
             <button id="measureNowButton" class="control">Now</button>
         </div>
 
-        <div class="row">
+        <div class="metric-row">
             <label>Remaining</label>
-            <div id="remainingSteps" class="slider-value mono value-primary">
+            <div id="remainingSteps" class="metric-value mono value-primary">
                 <span class="value">—</span>
-                <span class="unit">steps</span>
+                <span class="unit"></span>
             </div>
-            <div id="remainingDuration" class="mono value-primary">⏱ —</div>
+            <div id="remainingDuration" class="mono metric-duration value-primary">⏱ —</div>
         </div>
 
 
