@@ -250,6 +250,19 @@
             color: var(--text);
         }
 
+        .steps-value {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-align: right;
+            line-height: 1.2;
+        }
+
+        input.steps-value {
+            padding-right: 6px;
+        }
+
+
         /* =========================================================
            UTILITIES
         ========================================================= */
@@ -327,7 +340,7 @@
         <div class="row">
             <label>Total steps</label>
             <div id="totalStepsValue" class="numeric-value mono value-primary">—</div>
-            <input id="totalStepsInput" type="number" min="1" max="999999">
+            <input id="totalStepsInput" class="steps-value" type="number" min="1" max="999999">
             <div id="totalDuration" class="mono duration value-primary">⏱ —</div>
         </div>
 
@@ -353,7 +366,7 @@
         <div class="row">
             <label>Completed</label>
             <div id="completedStepsValue" class="numeric-value mono value-primary">—</div>
-            <input id="completedStepsInput" type="number" min="1" max="999999">
+            <input id="completedStepsInput" class="steps-value" type="number" min="1" max="999999">
             <div id="elapsedDuration" class="mono duration value-primary">⏱ —</div>
         </div>
 
