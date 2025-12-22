@@ -224,6 +224,31 @@
             }
         }
 
+        .value-primary {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .unit {
+            font-size: 0.9rem;   /* mismo tamaño que labels */
+            color: var(--muted);
+            margin-left: 4px;
+        }
+
+        .control {
+            height: 36px;
+            min-width: 36px;
+            padding: 0 10px;
+
+            font-size: 1rem;
+            line-height: 1;
+
+            border-radius: 8px;
+            border: 1px solid var(--muted);
+            background: var(--card-bg);
+            color: var(--text);
+        }
 
         /* =========================================================
            UTILITIES
@@ -291,7 +316,7 @@
 
         <div class="row">
             <label>Start</label>
-            <button id="setStartNowButton">Now</button>
+            <button id="setStartNowButton" class="control">Now</button>
         </div>
 
         <div class="row">
@@ -301,16 +326,16 @@
 
         <div class="row">
             <label>Total steps</label>
-            <div id="totalStepsValue" class="numeric-value mono">—</div>
+            <div id="totalStepsValue" class="numeric-value mono value-primary">—</div>
             <input id="totalStepsInput" type="number" min="1" max="999999">
-            <div id="totalDuration" class="mono duration">⏱ —</div>
+            <div id="totalDuration" class="mono duration value-primary">⏱ —</div>
         </div>
 
         <div class="row controls">
-            <button id="addTotalStepsButton">+</button>
-            <button id="subTotalStepsButton">-</button>
-            <button id="resetTotalStepsButton">⟲</button>
-            <select id="incTotalSteps">
+            <button id="addTotalStepsButton" class="control">+</button>
+            <button id="subTotalStepsButton" class="control">-</button>
+            <button id="resetTotalStepsButton" class="control">⟲</button>
+            <select id="incTotalSteps" class="control">
                 <option>     1</option>
                 <option>     5</option>
                 <option>    10</option>
@@ -327,16 +352,16 @@
 
         <div class="row">
             <label>Completed</label>
-            <div id="completedStepsValue" class="numeric-value mono">—</div>
+            <div id="completedStepsValue" class="numeric-value mono value-primary">—</div>
             <input id="completedStepsInput" type="number" min="1" max="999999">
-            <div id="elapsedDuration" class="mono duration">⏱ —</div>
+            <div id="elapsedDuration" class="mono duration value-primary">⏱ —</div>
         </div>
 
         <div class="row controls">
-            <button id="addCompletedStepsButton">+</button>
-            <button id="subCompletedStepsButton">-</button>
-            <button id="resetCompletedStepsButton">⟲</button>
-            <select id="incCompletedSteps">
+            <button id="addCompletedStepsButton" class="control">+</button>
+            <button id="subCompletedStepsButton" class="control">-</button>
+            <button id="resetCompletedStepsButton" class="control">⟲</button>
+            <select id="incCompletedSteps" class="control">
                 <option>     1</option>
                 <option>     5</option>
                 <option>    10</option>
@@ -353,20 +378,20 @@
 
         <div class="row">
             <label>Last <br> measurement</label>
-            <div id="lastMeasurementDate" class="datetime">
+            <div id="lastMeasurementDate" class="datetime value-primary">
                 <div class="time">—</div>
                 <div class="date">—</div>
             </div>
-            <button id="measureNowButton">Now</button>
+            <button id="measureNowButton" class="control">Now</button>
         </div>
 
         <div class="row">
             <label>Remaining</label>
-            <div id="remainingSteps" class="slider-value mono">
+            <div id="remainingSteps" class="slider-value mono value-primary">
                 <span class="value">—</span>
                 <span class="unit">steps</span>
             </div>
-            <div id="remainingDuration" class="mono">⏱ —</div>
+            <div id="remainingDuration" class="mono value-primary">⏱ —</div>
         </div>
 
 
