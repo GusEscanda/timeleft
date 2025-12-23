@@ -77,9 +77,37 @@
             gap: 12px;
         }
 
+        .process-control {
+            background: transparent;
+            padding: 8px 0;
+        }
+
+        .control.primary {
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .control.danger {
+            border-color: #c33;
+            color: #c33;
+        }
+
         .highlight {
             padding: 12px 20px;
             text-align: center;
+        }
+
+        /* SETUP */
+        .is-setup .block-running {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* RUNNING */
+        .is-running .block-setup {
+            opacity: 0.4;
+            pointer-events: none;
         }
 
         /* =========================================================
@@ -118,10 +146,26 @@
         }
 
         .row.controls {
+            display: flex;
+            align-items: center;
             justify-content: flex-end;
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
             gap: 6px;
         }
 
+        .reset {
+            margin-left: 16px;
+            opacity: 0.6;
+            border-color: transparent;
+        }
+
+        .reset:hover {
+            opacity: 1;
+        }
         /* =========================================================
            METRICS (value + duration)
         ========================================================= */
@@ -295,24 +339,21 @@
 
 <div class="app">
 
-    <!-- Header -->
+    <!-- ===============================
+         HEADER
+    ================================ -->
     <header class="header">
         <h1 class="title">TimeLeft</h1>
         <div class="subtitle">ETA Calculator</div>
     </header>
 
-    <!-- Estimated end -->
-    <section class="highlight">
-        <div class="muted">Estimated end</div>
-        <div id="estimatedEndDate" class="datetime estimated-end">
-            <div class="time">—</div>
-            <div class="date">—</div>
-        </div>
-    </section>
+    <!-- ===============================
+         BLOCK 1 — SETUP / START
+         "What is this process?"
+    ================================ -->
+    <section class="section block-setup" id="setupBlock">
 
-    <!-- Inputs -->
-    <section class="section">
-
+        <!-- Start date -->
         <div class="row">
             <label>Start</label>
             <button id="setStartNowButton" class="control">Now</button>
@@ -323,75 +364,167 @@
             <input id="startTimeInput" type="time" step="1">
         </div>
 
+        <!-- Total steps -->
         <div class="metric-row">
             <label>Total steps</label>
-            <div id="totalStepsValue" class="metric-value">—</div>
-            <input id="totalStepsInput" class="steps-input" type="number" min="1" max="999999">
-            <div id="totalDuration" class="metric-duration">⏱ —</div>
-        </div>
 
-        <div class="row controls">
-            <button id="addTotalStepsButton" class="control">+</button>
-            <button id="subTotalStepsButton" class="control">-</button>
-            <button id="resetTotalStepsButton" class="control">⟲</button>
-            <select id="incTotalSteps" class="control">
-                <option>1</option>
-                <option>5</option>
-                <option>10</option>
-                <option>50</option>
-                <option>100</option>
-                <option>500</option>
-                <option>1000</option>
-                <option>5000</option>
-                <option>10000</option>
-                <option>50000</option>
-                <option>100000</option>
-            </select>
-        </div>
+            <!-- Mobile value -->
+            <div id="totalStepsValue" class="metric-value mono value-primary">—</div>
 
-        <div class="metric-row">
-            <label>Completed</label>
-            <div id="completedStepsValue" class="metric-value">—</div>
-            <input id="completedStepsInput" class="steps-input" type="number" min="1" max="999999">
-            <div id="elapsedDuration" class="metric-duration">⏱ —</div>
-        </div>
+            <!-- Desktop input -->
+            <input
+                id="totalStepsInput"
+                class="steps-value"
+                type="number"
+                min="1"
+                max="999999"
+            >
 
-        <div class="row controls">
-            <button id="addCompletedStepsButton" class="control">+</button>
-            <button id="subCompletedStepsButton" class="control">-</button>
-            <button id="resetCompletedStepsButton" class="control">⟲</button>
-            <select id="incCompletedSteps" class="control">
-                <option>1</option>
-                <option>5</option>
-                <option>10</option>
-                <option>50</option>
-                <option>100</option>
-                <option>500</option>
-                <option>1000</option>
-                <option>5000</option>
-                <option>10000</option>
-                <option>50000</option>
-                <option>100000</option>
-            </select>
-        </div>
-
-        <div class="row">
-            <label>Last<br>measurement</label>
-            <div id="lastMeasurementDate" class="datetime">
-                <div class="time">—</div>
-                <div class="date">—</div>
+            <!-- Total duration (derived) -->
+            <div id="totalDuration" class="mono metric-duration value-primary">
+                ⏱ —
             </div>
-            <button id="measureNowButton" class="control">Now</button>
         </div>
 
-        <div class="metric-row">
-            <label>Remaining</label>
-            <div id="remainingSteps" class="metric-value">—</div>
-            <div id="remainingDuration" class="metric-duration">⏱ —</div>
+        <!-- Total steps controls -->
+        <div class="row controls">
+            <div class="controls-group">
+                <button id="addTotalStepsButton" class="control">+</button>
+                <button id="subTotalStepsButton" class="control">-</button>
+                <span class="by">by</span>
+                <select id="incTotalSteps" class="control">
+                    <option>1</option>
+                    <option>5</option>
+                    <option>10</option>
+                    <option>50</option>
+                    <option>100</option>
+                    <option>500</option>
+                    <option>1000</option>
+                    <option>5000</option>
+                    <option>10000</option>
+                    <option>50000</option>
+                    <option>100000</option>
+                </select>
+            </div>
+
+            <button id="resetTotalStepsButton" class="control reset">⟲</button>
+        </div>
+    </section>
+
+    <!-- ===============================
+         BLOCK PROCESS CONTROL
+         "Start process, reset process"
+    ================================ -->
+    <section class="section process-control">
+        <div class="row controls">
+            <button id="startProcessButton" class="control primary">
+                Start tracking
+            </button>
+
+            <button id="resetProcessButton" class="control danger">
+                New process
+            </button>
         </div>
 
     </section>
 
+    <!-- ===============================
+         BLOCK 2 — PROGRESS
+         "How is it going?"
+    ================================ -->
+    <section class="section block-running" id="progressBlock">
+
+        <!-- Completed steps -->
+        <div class="metric-row">
+            <label>Completed</label>
+
+            <!-- Mobile value -->
+            <div id="completedStepsValue" class="metric-value mono value-primary">—</div>
+
+            <!-- Desktop input -->
+            <input
+                id="completedStepsInput"
+                class="steps-value"
+                type="number"
+                min="0"
+                max="999999"
+            >
+
+            <!-- Elapsed duration -->
+            <div id="elapsedDuration" class="mono metric-duration value-primary">
+                ⏱ —
+            </div>
+        </div>
+
+        <!-- Completed controls -->
+        <div class="row controls">
+            <div class="controls-group">
+                <button id="addCompletedStepsButton" class="control">+</button>
+                <button id="subCompletedStepsButton" class="control">-</button>
+                <span class="by">by</span>
+                <select id="incCompletedSteps" class="control">
+                    <option>1</option>
+                    <option>5</option>
+                    <option>10</option>
+                    <option>50</option>
+                    <option>100</option>
+                    <option>500</option>
+                    <option>1000</option>
+                    <option>5000</option>
+                    <option>10000</option>
+                    <option>50000</option>
+                    <option>100000</option>
+                </select>
+            </div>
+
+            <button id="resetCompletedStepsButton" class="control reset">⟲</button>
+        </div>
+
+        <!-- Last measurement -->
+        <div class="row">
+            <label>Last measurement</label>
+
+            <div id="lastMeasurementDate" class="datetime value-primary">
+                <div class="time">—</div>
+                <div class="date">—</div>
+            </div>
+
+            <button id="measureNowButton" class="control">Now</button>
+        </div>
+
+        <!-- Remaining -->
+        <div class="metric-row">
+            <label>Remaining</label>
+
+            <div id="remainingSteps" class="metric-value mono value-primary">
+                <span class="value">—</span>
+            </div>
+
+            <div id="remainingDuration" class="mono metric-duration value-primary">
+                ⏱ —
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ===============================
+         BLOCK 3 — RESULT
+         "When will it finish?"
+    ================================ -->
+    <section class="highlight block-running">
+
+        <div class="highlight-label">Estimated end</div>
+
+        <div id="estimatedEndDate" class="datetime estimated-end">
+            <div class="time">—</div>
+            <div class="date">—</div>
+        </div>
+
+    </section>
+
+    <!-- ===============================
+         FOOTER
+    ================================ -->
     <footer class="footer">
         Version <span id="appVersion">0.01</span>
     </footer>

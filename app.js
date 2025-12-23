@@ -2,8 +2,13 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 0.6;
+const STATE_VERSION = 0.65;
 const STORAGE_KEY = "timeleft-state";
+
+const APP_STATE = {
+    SETUP: "setup",      // configuring start + totalSteps
+    RUNNING: "running",  // tracking completed steps
+};
 
 function saveState(state) {
     const payload = {
@@ -12,7 +17,8 @@ function saveState(state) {
             startDate: state.startDate.toISOString(),
             lastMeasurementDate: state.lastMeasurementDate.toISOString(),
             totalSteps: state.totalSteps,
-            completedSteps: state.completedSteps
+            completedSteps: state.completedSteps,
+            appState: state.appState
         }
     };
 
@@ -26,7 +32,8 @@ function createDefaultState() {
         startDate: now,
         lastMeasurementDate: now,
         totalSteps: 0,
-        completedSteps: 0
+        completedSteps: 0,
+        appState: APP_STATE.SETUP
     };
 }
 
@@ -47,7 +54,8 @@ function loadOrInitState() {
             startDate: new Date(parsed.state.startDate),
             lastMeasurementDate: new Date(parsed.state.lastMeasurementDate),
             totalSteps: parsed.state.totalSteps,
-            completedSteps: parsed.state.completedSteps
+            completedSteps: parsed.state.completedSteps,
+            appState: parsed.appState
         };
     } catch {
         return createDefaultState();
@@ -157,6 +165,13 @@ function combineDateAndTime(dateStr, timeStr) {
 // Render
 // ================================
 
+function updateUIState() {
+    const isSetup = state.appState === APP_STATE.SETUP;
+    console.log('updateUIState', state.appState, isSetup)
+    document.body.classList.toggle("is-setup", isSetup);
+    document.body.classList.toggle("is-running", !isSetup);
+}
+
 function renderDateTime(containerId, date) {
     const container = document.getElementById(containerId);
 
@@ -175,6 +190,7 @@ function renderDateTime(containerId, date) {
 
 function render() {
     const estimation = calculateEstimation(state);
+    updateUIState();
     saveState(state);
 
     if (!estimation) {
@@ -225,6 +241,9 @@ const incCompletedSteps = document.getElementById("incCompletedSteps");
 
 const setStartNowButton = document.getElementById("setStartNowButton");
 const measureNowButton = document.getElementById("measureNowButton");
+
+const startProcessButton = document.getElementById("startProcessButton");
+const resetProcessButton = document.getElementById("resetProcessButton");
 
 // ================================
 // Sync helpers
@@ -384,6 +403,24 @@ measureNowButton.addEventListener("click", () => {
     syncInputsFromState();
     render();
 });
+
+startProcessButton.addEventListener("click", () => {
+    console.log('start')
+    state.appState = APP_STATE.RUNNING;
+    state.lastMeasurementDate = new Date();
+    syncInputsFromState();
+    render();
+});
+
+resetProcessButton.addEventListener("click", () => {
+    console.log('reset')
+    state.appState = APP_STATE.SETUP;
+    state.completedSteps = 0;
+    state.totalSteps = 0;
+    syncInputsFromState();
+    render();
+});
+
 
 // ================================
 // Initial load
