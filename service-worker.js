@@ -3,6 +3,7 @@ const CACHE_NAME = "timeleft-v1";
 const STATIC_ASSETS = [
     "./",
     "./index.html",
+    "./styles.css",
     "./app.js",
     "./manifest.json",
     "./icons/icon-192.png",

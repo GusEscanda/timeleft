@@ -1,0 +1,369 @@
+/* =========================================================
+   THEME VARIABLES
+========================================================= */
+
+:root {
+    --bg: #f5f5f5;
+    --card-bg: #ffffff;
+    --text: #111;
+    --muted: #666;
+    --accent: #1f6feb;
+    --radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f1115;
+        --card-bg: #1a1d23;
+        --text: #eaeaea;
+        --muted: #9aa0a6;
+        --accent: #4ea1ff;
+    }
+}
+
+/* =========================================================
+   RESET / BASE
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: linear-gradient(180deg, var(--bg), transparent);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+}
+
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
+    padding: 16px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.app > * + * {
+    margin-top: 20px;
+}
+
+.app-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.section,
+.highlight {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+}
+
+.section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 16px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.highlight {
+    padding: 12px 20px;
+    text-align: center;
+}
+
+/* Process control (between blocks, not a card) */
+.process-control {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    display: flex;
+    justify-content: right;
+}
+
+.process-control .row {
+    margin: 0;
+}
+
+.process-control .control {
+    padding: 6px 12px;
+}
+
+
+/* =========================================================
+   APP STATES
+========================================================= */
+
+.is-setup .block-running {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.is-running .block-setup {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    text-align: center;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.subtitle {
+    margin-top: 4px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+/* =========================================================
+   ROWS / STRUCTURE
+========================================================= */
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.row label {
+    flex: 1;
+    font-weight: 600;
+}
+
+.row.controls {
+    justify-content: flex-end;
+}
+
+.controls-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* =========================================================
+   METRICS
+========================================================= */
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.metric-value {
+    font-family: monospace;
+    font-size: 1.4rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.metric-duration {
+    font-family: monospace;
+    font-size: 1.4rem;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   INPUT VS VALUE (DESKTOP / MOBILE)
+========================================================= */
+
+.metric-value {
+    display: none;
+}
+
+input[type="number"] {
+    display: block;
+}
+
+/* Remaining is always display-only */
+#remainingSteps {
+    display: block !important;
+}
+
+@media (pointer: coarse) {
+    .metric-value {
+        display: block;
+    }
+
+    input[type="number"] {
+        display: none;
+    }
+}
+
+/* =========================================================
+   DATETIME
+========================================================= */
+
+.datetime {
+    line-height: 1.1;
+}
+
+.datetime .time {
+    font-family: monospace;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.datetime .date {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+/* Estimated end highlight */
+.estimated-end {
+    min-height: 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.highlight .datetime .time {
+    font-size: 2.4rem;
+}
+
+.highlight .datetime .date {
+    font-size: 0.9rem;
+}
+
+/* =========================================================
+   FORM CONTROLS
+========================================================= */
+
+input,
+button,
+select {
+    font-size: 1rem;
+}
+
+input {
+    padding: 8px;
+    width: 100%;
+}
+
+.control {
+    height: 36px;
+    min-width: 36px;
+    padding: 0 10px;
+
+    border-radius: 8px;
+    border: 1px solid var(--muted);
+    background: var(--card-bg);
+    color: var(--text);
+
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+/* Control variants */
+.control.primary {
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.control.danger {
+    border-color: #c33;
+    color: #c33;
+}
+
+/* Reset button inside controls */
+.reset {
+    margin-left: 16px;
+    opacity: 0.6;
+    border-color: transparent;
+}
+
+.reset:hover {
+    opacity: 1;
+}
+
+/* Steps input */
+.steps-input {
+    font-family: monospace;
+    font-size: 1.4rem;
+    text-align: right;
+    padding-right: 6px;
+}
+
+/* Started earlier */
+.started-earlier {
+    margin-top: 8px;
+    opacity: 0.6;
+    font-size: 0.85em;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.started-earlier label {
+    margin: 0;
+}
+
+.started-earlier input {
+    width: auto;
+    max-width: 220px;
+    font-size: 0.9em;
+}
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+.mono {
+    font-family: monospace;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+    margin-top: auto;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 8px 0;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (min-width: 600px) {
+    .app {
+        padding: 24px;
+    }
+
+    .highlight .datetime .time {
+        font-size: 2.8rem;
+    }
+}

@@ -8,351 +8,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
     <link rel="icon" href="./favicon.ico">
-
-    <style>
-        /* =========================================================
-           THEME VARIABLES
-        ========================================================= */
-
-        :root {
-            --bg: #f5f5f5;
-            --card-bg: #ffffff;
-            --text: #111;
-            --muted: #666;
-            --accent: #1f6feb;
-            --radius: 12px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #0f1115;
-                --card-bg: #1a1d23;
-                --text: #eaeaea;
-                --muted: #9aa0a6;
-                --accent: #4ea1ff;
-            }
-        }
-
-        /* =========================================================
-           RESET / BASE
-        ========================================================= */
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: system-ui, sans-serif;
-            background: linear-gradient(180deg, var(--bg), transparent);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-        }
-
-        /* =========================================================
-           APP LAYOUT
-        ========================================================= */
-
-        .app {
-            width: 100%;
-            max-width: 420px;
-            min-height: 100vh;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .section,
-        .highlight {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-        }
-
-        .section {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .process-control {
-            background: transparent;
-            padding: 8px 0;
-        }
-
-        .control.primary {
-            border-color: var(--accent);
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .control.danger {
-            border-color: #c33;
-            color: #c33;
-        }
-
-        .highlight {
-            padding: 12px 20px;
-            text-align: center;
-        }
-
-        /* SETUP */
-        .is-setup .block-running {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        /* RUNNING */
-        .is-running .block-setup {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        /* =========================================================
-           HEADER
-        ========================================================= */
-
-        .header {
-            text-align: center;
-        }
-
-        .title {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            margin-top: 4px;
-            font-size: 0.9rem;
-            color: var(--muted);
-        }
-
-        /* =========================================================
-           ROWS / STRUCTURE
-        ========================================================= */
-
-        .row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .row label {
-            flex: 1;
-            font-weight: 600;
-        }
-
-        .row.controls {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .controls-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .reset {
-            margin-left: 16px;
-            opacity: 0.6;
-            border-color: transparent;
-        }
-
-        .reset:hover {
-            opacity: 1;
-        }
-        /* =========================================================
-           METRICS (value + duration)
-        ========================================================= */
-
-        .metric-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 12px;
-        }
-
-        .metric-value {
-            font-family: monospace;
-            font-size: 1.4rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .metric-duration {
-            font-family: monospace;
-            font-size: 1.4rem;
-            opacity: 0.8;
-            white-space: nowrap;
-        }
-
-        /* =========================================
-        Desktop default (keyboard / mouse)
-        ========================================= */
-
-        .metric-value {
-            display: none;
-        }
-
-        input[type="number"] {
-            display: block;
-        }
-
-        /* Remaining is display-only: always visible */
-        #remainingSteps {
-            display: block !important;
-        }
-
-        /* =========================================
-        Mobile / touch devices
-        ========================================= */
-
-        @media (pointer: coarse) {
-            .metric-value {
-                display: block;
-            }
-
-            input[type="number"] {
-                display: none;
-            }
-        }
-
-        /* =========================================================
-           DATETIME
-        ========================================================= */
-
-        .datetime {
-            line-height: 1.1;
-        }
-
-        .datetime .time {
-            font-family: monospace;
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-
-        .datetime .date {
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
-
-        /* Highlight variant */
-        .estimated-end {
-            min-height: 72px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .highlight .datetime .time {
-            font-size: 2.4rem;
-        }
-
-        .highlight .datetime .date {
-            font-size: 0.9rem;
-        }
-
-        /* =========================================================
-           FORM CONTROLS
-        ========================================================= */
-
-        input,
-        button,
-        select {
-            font-size: 1rem;
-            padding: 8px;
-        }
-
-        input {
-            width: 100%;
-        }
-
-        .control {
-            height: 36px;
-            min-width: 36px;
-            padding: 0 10px;
-
-            border-radius: 8px;
-            border: 1px solid var(--muted);
-            background: var(--card-bg);
-            color: var(--text);
-
-            font-size: 1rem;
-            line-height: 1;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-
-        .steps-input {
-            font-family: monospace;
-            font-size: 1.4rem;
-            text-align: right;
-            padding-right: 6px;
-        }
-
-        .started-earlier {
-            margin-top: 8px;
-            opacity: 0.6;
-            font-size: 0.85em;
-
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .started-earlier label {
-            margin: 0;
-        }
-
-        .started-earlier input {
-            width: auto;
-            max-width: 220px;
-            font-size: 0.9em;
-        }
-
-        /* =========================================================
-           UTILITIES
-        ========================================================= */
-
-        .mono {
-            font-family: monospace;
-        }
-
-        .muted {
-            color: var(--muted);
-        }
-
-        /* =========================================================
-           FOOTER
-        ========================================================= */
-
-        .footer {
-            margin-top: auto;
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--muted);
-            padding: 8px 0;
-        }
-
-        /* =========================================================
-           RESPONSIVE
-        ========================================================= */
-
-        @media (min-width: 600px) {
-            .app {
-                padding: 24px;
-            }
-
-            .highlight .datetime .time {
-                font-size: 2.8rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -368,189 +24,179 @@
     </header>
 
     <!-- ===============================
-         BLOCK 1 — SETUP / START
-         "What is this process?"
-    ================================ -->
-    <section class="section block-setup" id="setupBlock">
-<!--
-        
-        <div class="row">
-            <label>Start</label>
-            <button id="setStartNowButton" class="control">Now</button>
-        </div>
-
-        <div class="row">
-            <input id="startDateInput" type="date">
-            <input id="startTimeInput" type="time" step="1">
-        </div>
- -->
-
-        <!-- Total steps -->
-        <div class="metric-row">
-            <label>Total work</label>
-
-            <!-- Mobile value -->
-            <div id="totalStepsValue" class="metric-value mono value-primary">—</div>
-
-            <!-- Desktop input -->
-            <input
-                id="totalStepsInput"
-                class="steps-value"
-                type="number"
-                min="1"
-                max="999999"
-            >
-
-            <!-- Total duration (derived) -->
-            <div id="totalDuration" class="mono metric-duration value-primary">
-                ⏱ —
-            </div>
-        </div>
-
-        <!-- Total steps controls -->
-        <div class="row controls">
-            <div class="controls-group">
-                <button id="addTotalStepsButton" class="control">+</button>
-                <button id="subTotalStepsButton" class="control">-</button>
-                <span class="by">by</span>
-                <select id="incTotalSteps" class="control">
-                    <option>1</option>
-                    <option>5</option>
-                    <option>10</option>
-                    <option>50</option>
-                    <option>100</option>
-                    <option>500</option>
-                    <option>1000</option>
-                    <option>5000</option>
-                    <option>10000</option>
-                    <option>50000</option>
-                    <option>100000</option>
-                </select>
-            </div>
-
-            <button id="resetTotalStepsButton" class="control reset">⟲</button>
-        </div>
-
-        <!-- Started earlier? -->
-        <div class="started-earlier">
-            <label for="startDateInput">Started earlier?</label>
-            <input
-                type="datetime-local"
-                id="startDateInput"
-            />
-        </div>
-    </section>
-
-    <!-- ===============================
          BLOCK PROCESS CONTROL
          "Start process, reset process"
     ================================ -->
-    <section class="section process-control">
+    <section class="process-control">
         <div class="row controls">
             <button id="startProcessButton" class="control primary block-setup">
-                Start tracking
+                &#9654;
             </button>
 
             <button id="resetProcessButton" class="control danger block-running">
-                New process
+                &#8634;
             </button>
         </div>
-
     </section>
 
-    <!-- ===============================
-         BLOCK 2 — PROGRESS
-         "How is it going?"
-    ================================ -->
-    <section class="section block-running" id="progressBlock">
+    <main class="app-main">
+        
+        <!-- ===============================
+            BLOCK 1 — SETUP / START
+            "What is this process?"
+        ================================ -->
+        <section class="section block-setup" id="setupBlock">
+            <!-- Total steps -->
+            <div class="metric-row">
+                <label>Total work</label>
 
-        <!-- Completed steps -->
-        <div class="metric-row">
-            <label>Progress</label>
+                <!-- Mobile value -->
+                <div id="totalStepsValue" class="metric-value mono value-primary">—</div>
 
-            <!-- Mobile value -->
-            <div id="completedStepsValue" class="metric-value mono value-primary">—</div>
+                <!-- Desktop input -->
+                <input
+                    id="totalStepsInput"
+                    class="steps-value"
+                    type="number"
+                    min="1"
+                    max="999999"
+                >
 
-            <!-- Desktop input -->
-            <input
-                id="completedStepsInput"
-                class="steps-value"
-                type="number"
-                min="0"
-                max="999999"
-            >
-
-            <!-- Elapsed duration -->
-            <div id="elapsedDuration" class="mono metric-duration value-primary">
-                ⏱ —
-            </div>
-        </div>
-
-        <!-- Completed controls -->
-        <div class="row controls">
-            <div class="controls-group">
-                <button id="addCompletedStepsButton" class="control">+</button>
-                <button id="subCompletedStepsButton" class="control">-</button>
-                <span class="by">by</span>
-                <select id="incCompletedSteps" class="control">
-                    <option>1</option>
-                    <option>5</option>
-                    <option>10</option>
-                    <option>50</option>
-                    <option>100</option>
-                    <option>500</option>
-                    <option>1000</option>
-                    <option>5000</option>
-                    <option>10000</option>
-                    <option>50000</option>
-                    <option>100000</option>
-                </select>
+                <!-- Total duration (derived) -->
+                <div id="totalDuration" class="mono metric-duration value-primary">
+                    ⏱ —
+                </div>
             </div>
 
-            <button id="resetCompletedStepsButton" class="control reset">⟲</button>
-        </div>
+            <!-- Total steps controls -->
+            <div class="row controls">
+                <div class="controls-group">
+                    <button id="addTotalStepsButton" class="control">+</button>
+                    <button id="subTotalStepsButton" class="control">-</button>
+                    <span class="by">by</span>
+                    <select id="incTotalSteps" class="control">
+                        <option>1</option>
+                        <option>5</option>
+                        <option>10</option>
+                        <option>50</option>
+                        <option>100</option>
+                        <option>500</option>
+                        <option>1000</option>
+                        <option>5000</option>
+                        <option>10000</option>
+                        <option>50000</option>
+                        <option>100000</option>
+                    </select>
+                </div>
 
-        <!-- Last measurement -->
-        <div class="row">
-            <label>Last update</label>
+                <button id="resetTotalStepsButton" class="control reset">⟲</button>
+            </div>
 
-            <div id="lastMeasurementDate" class="datetime value-primary">
+            <!-- Started earlier? -->
+            <div class="started-earlier">
+                <label for="startDateInput">Started earlier?</label>
+                <input
+                    type="datetime-local"
+                    id="startDateInput"
+                />
+            </div>
+        </section>
+
+        <!-- ===============================
+            BLOCK 2 — PROGRESS
+            "How is it going?"
+        ================================ -->
+        <section class="section block-running" id="progressBlock">
+
+            <!-- Completed steps -->
+            <div class="metric-row">
+                <label>Progress</label>
+
+                <!-- Mobile value -->
+                <div id="completedStepsValue" class="metric-value mono value-primary">—</div>
+
+                <!-- Desktop input -->
+                <input
+                    id="completedStepsInput"
+                    class="steps-value"
+                    type="number"
+                    min="0"
+                    max="999999"
+                >
+
+                <!-- Elapsed duration -->
+                <div id="elapsedDuration" class="mono metric-duration value-primary">
+                    ⏱ —
+                </div>
+            </div>
+
+            <!-- Completed controls -->
+            <div class="row controls">
+                <div class="controls-group">
+                    <button id="addCompletedStepsButton" class="control">+</button>
+                    <button id="subCompletedStepsButton" class="control">-</button>
+                    <span class="by">by</span>
+                    <select id="incCompletedSteps" class="control">
+                        <option>1</option>
+                        <option>5</option>
+                        <option>10</option>
+                        <option>50</option>
+                        <option>100</option>
+                        <option>500</option>
+                        <option>1000</option>
+                        <option>5000</option>
+                        <option>10000</option>
+                        <option>50000</option>
+                        <option>100000</option>
+                    </select>
+                </div>
+
+                <button id="resetCompletedStepsButton" class="control reset">⟲</button>
+            </div>
+
+            <!-- Last measurement -->
+            <div class="row">
+                <label>Last update</label>
+
+                <div id="lastMeasurementDate" class="datetime value-primary">
+                    <div class="time">—</div>
+                    <div class="date">—</div>
+                </div>
+
+                <button id="measureNowButton" class="control">Now</button>
+            </div>
+
+            <!-- Remaining -->
+            <div class="metric-row">
+                <label>Remaining</label>
+
+                <div id="remainingSteps" class="metric-value mono value-primary">
+                    <span class="value">—</span>
+                </div>
+
+                <div id="remainingDuration" class="mono metric-duration value-primary">
+                    ⏱ —
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ===============================
+            BLOCK 3 — RESULT
+            "When will it finish?"
+        ================================ -->
+        <section class="highlight block-running">
+
+            <div class="highlight-label">Estimated end</div>
+
+            <div id="estimatedEndDate" class="datetime estimated-end">
                 <div class="time">—</div>
                 <div class="date">—</div>
             </div>
 
-            <button id="measureNowButton" class="control">Now</button>
-        </div>
+        </section>
 
-        <!-- Remaining -->
-        <div class="metric-row">
-            <label>Remaining</label>
-
-            <div id="remainingSteps" class="metric-value mono value-primary">
-                <span class="value">—</span>
-            </div>
-
-            <div id="remainingDuration" class="mono metric-duration value-primary">
-                ⏱ —
-            </div>
-        </div>
-
-    </section>
-
-    <!-- ===============================
-         BLOCK 3 — RESULT
-         "When will it finish?"
-    ================================ -->
-    <section class="highlight block-running">
-
-        <div class="highlight-label">Estimated end</div>
-
-        <div id="estimatedEndDate" class="datetime estimated-end">
-            <div class="time">—</div>
-            <div class="date">—</div>
-        </div>
-
-    </section>
+    </main>
 
     <!-- ===============================
          FOOTER
