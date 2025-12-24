@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 0.67;
+const STATE_VERSION = 0.72;
 const STORAGE_KEY = "timeleft-state";
 
 const APP_STATE = {
@@ -14,8 +14,8 @@ function saveState(state) {
     const payload = {
         version: STATE_VERSION,
         state: {
-            startDate: state.startDate.toISOString(),
-            lastMeasurementDate: state.lastMeasurementDate.toISOString(),
+            startDate: state.startDate ? state.startDate.toISOString() : null,
+            lastMeasurementDate: state.lastMeasurementDate ? state.lastMeasurementDate.toISOString() : null,
             totalSteps: state.totalSteps,
             completedSteps: state.completedSteps,
             appState: state.appState
@@ -26,11 +26,9 @@ function saveState(state) {
 }
 
 function createDefaultState() {
-    const now = new Date();
-
     return {
-        startDate: now,
-        lastMeasurementDate: now,
+        startDate: null,
+        lastMeasurementDate: null,
         totalSteps: 0,
         completedSteps: 0,
         appState: APP_STATE.SETUP
@@ -45,17 +43,16 @@ function loadOrInitState() {
 
     try {
         const parsed = JSON.parse(raw);
-
         if (parsed.version !== STATE_VERSION) {
             return createDefaultState();
         }
 
         return {
-            startDate: new Date(parsed.state.startDate),
-            lastMeasurementDate: new Date(parsed.state.lastMeasurementDate),
+            startDate: parsed.state.startDate ? new Date(parsed.state.startDate) : null,
+            lastMeasurementDate: parsed.state.lastMeasurementDate ? new Date(parsed.state.lastMeasurementDate) : null,
             totalSteps: parsed.state.totalSteps,
             completedSteps: parsed.state.completedSteps,
-            appState: parsed.appState
+            appState: parsed.state.appState
         };
     } catch {
         return createDefaultState();
@@ -106,7 +103,6 @@ function updateSteps(field, delta) {
     if (field === "total") {
         state.totalSteps = state.totalSteps + delta;
         state.totalSteps = Math.max(state.totalSteps, 0)
-        state.totalSteps = Math.max(state.totalSteps, state.completedSteps)
     }
 
     if (field === "completed") {
@@ -167,7 +163,6 @@ function combineDateAndTime(dateStr, timeStr) {
 
 function updateUIState() {
     const isSetup = state.appState === APP_STATE.SETUP;
-    console.log('updateUIState', state.appState, isSetup)
     document.body.classList.toggle("is-setup", isSetup);
     document.body.classList.toggle("is-running", !isSetup);
 }
@@ -224,7 +219,6 @@ function render() {
 // ================================
 
 const startDateInput = document.getElementById("startDateInput");
-const startTimeInput = document.getElementById("startTimeInput");
 
 const totalStepsValue = document.getElementById("totalStepsValue")
 const totalStepsInput = document.getElementById("totalStepsInput");
@@ -239,7 +233,6 @@ const subCompletedStepsButton = document.getElementById("subCompletedStepsButton
 const resetCompletedStepsButton = document.getElementById("resetCompletedStepsButton");
 const incCompletedSteps = document.getElementById("incCompletedSteps");
 
-const setStartNowButton = document.getElementById("setStartNowButton");
 const measureNowButton = document.getElementById("measureNowButton");
 
 const startProcessButton = document.getElementById("startProcessButton");
@@ -250,8 +243,13 @@ const resetProcessButton = document.getElementById("resetProcessButton");
 // ================================
 
 function syncInputsFromState() {
-    startDateInput.value = formatDateForInput(state.startDate);
-    startTimeInput.value = formatTimeForInput(state.startDate);
+    if (state.startDate) {
+        startDateInput.value = state.startDate
+            .toISOString()
+            .slice(0, 16); // yyyy-MM-ddTHH:mm
+    } else {
+        startDateInput.value = "";
+    }
 
     totalStepsValue.textContent = state.totalSteps;
     completedStepsValue.textContent = state.completedSteps;
@@ -327,12 +325,20 @@ function attachRepeatingPress(
 // ================================
 
 startDateInput.addEventListener("change", () => {
-    updateStartDateFromInputs();
-    render();
-});
+    if (!startDateInput.value) {
+        state.startDate = null;
+        return;
+    }
 
-startTimeInput.addEventListener("change", () => {
-    updateStartDateFromInputs();
+    const selectedDate = new Date(startDateInput.value);
+
+    if (isNaN(selectedDate.getTime())) {
+        state.startDate = null;
+        return;
+    }
+
+    state.startDate = selectedDate;
+    syncInputsFromState();
     render();
 });
 
@@ -390,14 +396,6 @@ resetCompletedStepsButton.addEventListener("click", () => {
     render();
 });
 
-setStartNowButton.addEventListener("click", () => {
-    const now = new Date();
-    state.startDate = now;
-    state.lastMeasurementDate = now;
-    syncInputsFromState();
-    render();
-});
-
 measureNowButton.addEventListener("click", () => {
     state.lastMeasurementDate = new Date();
     syncInputsFromState();
@@ -405,18 +403,27 @@ measureNowButton.addEventListener("click", () => {
 });
 
 startProcessButton.addEventListener("click", () => {
-    console.log('start')
+    if (state.totalSteps < 1) return;
+
+    const now = Date.now();
+
+    if (!state.startDate) {
+        state.startDate = new Date(now);
+    }
+
+    if (state.startDate.getTime() > now) return;
+
     state.appState = APP_STATE.RUNNING;
-    state.lastMeasurementDate = new Date();
+    state.lastMeasurementDate = new Date(now);
     syncInputsFromState();
     render();
 });
 
 resetProcessButton.addEventListener("click", () => {
-    console.log('reset')
     state.appState = APP_STATE.SETUP;
     state.completedSteps = 0;
     state.totalSteps = 0;
+    state.startDate = null;
     syncInputsFromState();
     render();
 });

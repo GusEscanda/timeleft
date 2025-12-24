@@ -295,6 +295,23 @@
             padding-right: 6px;
         }
 
+        .started-earlier {
+        margin-top: 8px;
+        opacity: 0.6;
+        font-size: 0.85em;
+        }
+
+        .started-earlier label {
+        display: block;
+        margin-bottom: 4px;
+        }
+
+        .started-earlier input {
+        width: auto;
+        max-width: 220px;
+        font-size: 0.9em;
+        }
+
         /* =========================================================
            UTILITIES
         ========================================================= */
@@ -352,8 +369,8 @@
          "What is this process?"
     ================================ -->
     <section class="section block-setup" id="setupBlock">
-
-        <!-- Start date -->
+<!--
+        
         <div class="row">
             <label>Start</label>
             <button id="setStartNowButton" class="control">Now</button>
@@ -363,10 +380,11 @@
             <input id="startDateInput" type="date">
             <input id="startTimeInput" type="time" step="1">
         </div>
+ -->
 
         <!-- Total steps -->
         <div class="metric-row">
-            <label>Total steps</label>
+            <label>Total work</label>
 
             <!-- Mobile value -->
             <div id="totalStepsValue" class="metric-value mono value-primary">—</div>
@@ -409,6 +427,15 @@
 
             <button id="resetTotalStepsButton" class="control reset">⟲</button>
         </div>
+
+        <!-- Started earlier? -->
+        <div class="started-earlier">
+            <label for="startDateInput">Started earlier?</label>
+            <input
+                type="datetime-local"
+                id="startDateInput"
+            />
+        </div>
     </section>
 
     <!-- ===============================
@@ -436,7 +463,7 @@
 
         <!-- Completed steps -->
         <div class="metric-row">
-            <label>Completed</label>
+            <label>Progress</label>
 
             <!-- Mobile value -->
             <div id="completedStepsValue" class="metric-value mono value-primary">—</div>
@@ -482,7 +509,7 @@
 
         <!-- Last measurement -->
         <div class="row">
-            <label>Last measurement</label>
+            <label>Last update</label>
 
             <div id="lastMeasurementDate" class="datetime value-primary">
                 <div class="time">—</div>
