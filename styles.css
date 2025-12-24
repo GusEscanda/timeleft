@@ -367,3 +367,84 @@ input {
         font-size: 2.8rem;
     }
 }
+
+/* ===============================
+   FEEDBACK
+================================ */
+
+.feedback {
+    position: fixed;
+    left: 50%;
+    top: 55%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.feedback.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.02);
+}
+
+/* types */
+.feedback.error {
+    background: #c33;
+    color: white;
+}
+
+.feedback.success {
+    background: var(--accent);
+    color: white;
+}
+
+.feedback.info {
+    background: #444;
+    color: white;
+}
+
+/* subtle shake for errors */
+@keyframes shake {
+    0% { transform: translateX(-50%) translateX(0); }
+    25% { transform: translateX(-50%) translateX(-4px); }
+    50% { transform: translateX(-50%) translateX(4px); }
+    75% { transform: translateX(-50%) translateX(-3px); }
+    100% { transform: translateX(-50%) translateX(0); }
+}
+
+.feedback.shake {
+    animation: shake 0.25s ease;
+}
+
+@keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 120ms ease-out;
+}
+
+@keyframes shake {
+    0%   { transform: translateX(0); }
+    25%  { transform: translateX(-4px); }
+    50%  { transform: translateX(4px); }
+    75%  { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 180ms ease-in-out;
+}
+
+.error-flash {
+    color: #c33;
+}
+

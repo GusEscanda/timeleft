@@ -2,6 +2,8 @@
 // Storage
 // ================================
 
+import * as feedback from "./feedback.js";
+
 const STATE_VERSION = 0.81;
 const STORAGE_KEY = "timeleft-state";
 
@@ -9,13 +11,6 @@ const APP_STATE = {
     SETUP: "setup",      // configuring start + totalSteps
     RUNNING: "running",  // tracking completed steps
 };
-
-const VIBRATE = {
-    OK: 10,
-    START: 30,
-    RESET: [20, 30, 20],
-    ERROR: [15, 30, 15],
-}
 
 function saveState(state) {
     const payload = {
@@ -106,17 +101,27 @@ function calculateEstimation(state) {
     }
 }
 
-function updateSteps(field, delta) {
-    if (field === "total") {
-        state.totalSteps = state.totalSteps + delta;
-        state.totalSteps = Math.max(state.totalSteps, 0)
+function updateTotalSteps(btnElem, delta) {
+    const prev_value = state.totalSteps;
+    state.totalSteps = state.totalSteps + delta;
+    state.totalSteps = Math.max(state.totalSteps, 0);
+    if (prev_value != state.totalSteps) {
+        feedback.pulse(btnElem);
+    } else {
+        feedback.shake(btnElem);
     }
+}
 
-    if (field === "completed") {
-        state.completedSteps = state.completedSteps + delta;
-        state.completedSteps = Math.max(state.completedSteps, 0)
-        state.completedSteps = Math.min(state.completedSteps, state.totalSteps)
-        state.lastMeasurementDate = new Date();
+function updateCompletedSteps(btnElem, delta) {
+    const prev_value = state.completedSteps;
+    state.completedSteps = state.completedSteps + delta;
+    state.completedSteps = Math.max(state.completedSteps, 0);
+    state.completedSteps = Math.min(state.completedSteps, state.totalSteps);
+    state.lastMeasurementDate = new Date();
+    if (prev_value != state.completedSteps) {
+        feedback.pulse(btnElem);
+    } else {
+        feedback.shake(btnElem);
     }
 }
 
@@ -262,11 +267,6 @@ const resetProcessButton = document.getElementById("resetProcessButton");
 // helpers
 // ================================
 
-function vibrate(pattern) {
-    if (!("vibrate" in navigator)) return;
-    navigator.vibrate(pattern);
-}
-
 function attachRepeatingPress(
     button,
     callback,
@@ -335,12 +335,12 @@ completedStepsInput.addEventListener("input", () => {
 });
 
 attachRepeatingPress(addTotalStepsButton, () => {
-    updateSteps("total", Number(incTotalSteps.value));
+    updateTotalSteps(addTotalStepsButton, Number(incTotalSteps.value));
     render();
 });
 
 attachRepeatingPress(subTotalStepsButton, () => {
-    updateSteps("total", - Number(incTotalSteps.value));
+    updateTotalSteps(subTotalStepsButton, -Number(incTotalSteps.value));
     render();
 });
 
@@ -348,35 +348,39 @@ resetTotalStepsButton.addEventListener("click", () => {
     state.totalSteps = 0;
     state.completedSteps = 0;
     state.lastMeasurementDate = new Date();
-    vibrate(VIBRATE.OK);
+    feedback.pulse(resetTotalStepsButton);
     render();
 });
 
 attachRepeatingPress(addCompletedStepsButton, () => {
-    updateSteps("completed", Number(incCompletedSteps.value));
+    updateCompletedSteps(addCompletedStepsButton, Number(incCompletedSteps.value));
     render();
 });
 
 attachRepeatingPress(subCompletedStepsButton, () => {
-    updateSteps("completed", - Number(incCompletedSteps.value));
+    updateCompletedSteps(subCompletedStepsButton, -Number(incCompletedSteps.value));
     render();
 });
 
 resetCompletedStepsButton.addEventListener("click", () => {
     state.completedSteps = 0;
     state.lastMeasurementDate = new Date();
-    vibrate(VIBRATE.OK);
+    feedback.pulse(resetCompletedStepsButton);
     render();
 });
 
 measureNowButton.addEventListener("click", () => {
     state.lastMeasurementDate = new Date();
-    vibrate(VIBRATE.OK);
+    feedback.pulse(measureNowButton);
     render();
 });
 
 startProcessButton.addEventListener("click", () => {
-    if (state.totalSteps < 1) {vibrate(VIBRATE.ERROR); return};
+    if (state.totalSteps < 1) {
+        feedback.shake(startProcessButton);
+        feedback.error("Set total work first");
+        return;
+    }
 
     const now = Date.now();
 
@@ -384,11 +388,16 @@ startProcessButton.addEventListener("click", () => {
         state.startDate = new Date(now);
     }
 
-    if (state.startDate.getTime() > now) {vibrate(VIBRATE.ERROR); return};
+    if (state.startDate.getTime() > now) {
+        feedback.shake(startProcessButton);
+        feedback.error("Start date cannot be in the future!");
+        return;
+    }
 
     state.appState = APP_STATE.RUNNING;
     state.lastMeasurementDate = new Date(now);
-    vibrate(VIBRATE.START)
+    feedback.pulse(startProcessButton);
+    feedback.info("Process started");
     render();
 });
 
@@ -397,7 +406,7 @@ resetProcessButton.addEventListener("click", () => {
     state.completedSteps = 0;
     state.totalSteps = 0;
     state.startDate = null;
-    vibrate(VIBRATE.RESET)
+    feedback.pulse(resetProcessButton);
     render();
 });
 
