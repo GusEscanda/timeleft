@@ -1,3 +1,5 @@
+// app.js
+
 // ================================
 // Storage
 // ================================
@@ -397,7 +399,7 @@ startProcessButton.addEventListener("click", () => {
     state.appState = APP_STATE.RUNNING;
     state.lastMeasurementDate = new Date(now);
     feedback.pulse(startProcessButton);
-    feedback.info("Process started");
+    feedback.success("Process started");
     render();
 });
 
@@ -407,6 +409,7 @@ resetProcessButton.addEventListener("click", () => {
     state.totalSteps = 0;
     state.startDate = null;
     feedback.pulse(resetProcessButton);
+    feedback.info("New process");
     render();
 });
 

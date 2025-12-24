@@ -25,15 +25,15 @@ function show(message, type = "info", duration = 1200) {
 ========================= */
 
 export function error(msg) {
-    show(msg, "error", 1400);
+    show(msg, "error", 1600);
 }
 
 export function success(msg) {
-    show(msg, "success", 900);
+    show(msg, "success", 1200);
 }
 
 export function info(msg) {
-    show(msg, "info", 1000);
+    show(msg, "info", 1200);
 }
 
 /* =========================
@@ -51,9 +51,9 @@ export function pulse(el) {
 export function shake(el) {
     if (!el) return;
 
-    el.classList.add("shake", "error-flash");
+    el.classList.add("shake-inline", "error-flash");
 
     setTimeout(() => {
-        el.classList.remove("shake", "error-flash");
+        el.classList.remove("shake-inline", "error-flash");
     }, 300);
 }
