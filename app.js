@@ -2,13 +2,20 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 0.8;
+const STATE_VERSION = 0.81;
 const STORAGE_KEY = "timeleft-state";
 
 const APP_STATE = {
     SETUP: "setup",      // configuring start + totalSteps
     RUNNING: "running",  // tracking completed steps
 };
+
+const VIBRATE = {
+    OK: 10,
+    START: 30,
+    RESET: [20, 30, 20],
+    ERROR: [15, 30, 15],
+}
 
 function saveState(state) {
     const payload = {
@@ -252,8 +259,13 @@ const startProcessButton = document.getElementById("startProcessButton");
 const resetProcessButton = document.getElementById("resetProcessButton");
 
 // ================================
-// Autorepeat helper
+// helpers
 // ================================
+
+function vibrate(pattern) {
+    if (!("vibrate" in navigator)) return;
+    navigator.vibrate(pattern);
+}
 
 function attachRepeatingPress(
     button,
@@ -336,6 +348,7 @@ resetTotalStepsButton.addEventListener("click", () => {
     state.totalSteps = 0;
     state.completedSteps = 0;
     state.lastMeasurementDate = new Date();
+    vibrate(VIBRATE.OK);
     render();
 });
 
@@ -352,16 +365,18 @@ attachRepeatingPress(subCompletedStepsButton, () => {
 resetCompletedStepsButton.addEventListener("click", () => {
     state.completedSteps = 0;
     state.lastMeasurementDate = new Date();
+    vibrate(VIBRATE.OK);
     render();
 });
 
 measureNowButton.addEventListener("click", () => {
     state.lastMeasurementDate = new Date();
+    vibrate(VIBRATE.OK);
     render();
 });
 
 startProcessButton.addEventListener("click", () => {
-    if (state.totalSteps < 1) return;
+    if (state.totalSteps < 1) {vibrate(VIBRATE.ERROR); return};
 
     const now = Date.now();
 
@@ -369,10 +384,11 @@ startProcessButton.addEventListener("click", () => {
         state.startDate = new Date(now);
     }
 
-    if (state.startDate.getTime() > now) return;
+    if (state.startDate.getTime() > now) {vibrate(VIBRATE.ERROR); return};
 
     state.appState = APP_STATE.RUNNING;
     state.lastMeasurementDate = new Date(now);
+    vibrate(VIBRATE.START)
     render();
 });
 
@@ -381,6 +397,7 @@ resetProcessButton.addEventListener("click", () => {
     state.completedSteps = 0;
     state.totalSteps = 0;
     state.startDate = null;
+    vibrate(VIBRATE.RESET)
     render();
 });
 
