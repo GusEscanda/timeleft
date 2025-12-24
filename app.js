@@ -2,7 +2,7 @@
 // Storage
 // ================================
 
-const STATE_VERSION = 0.72;
+const STATE_VERSION = 0.73;
 const STORAGE_KEY = "timeleft-state";
 
 const APP_STATE = {
@@ -132,29 +132,28 @@ function formatDuration(ms) {
     return `⏱ ${hours}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-function formatDateForInput(date) {
-    const pad = (n) => String(n).padStart(2, "0");
+function parseLocalDateTime(value) {
+    if (!value) return null;
+
+    const [datePart, timePart] = value.split("T");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hour, minute] = timePart.split(":").map(Number);
+
+    return new Date(year, month - 1, day, hour, minute);
+}
+
+function formatForDatetimeLocal(date) {
+    if (!date) return "";
+
+    const pad = n => String(n).padStart(2, "0");
 
     return (
         date.getFullYear() + "-" +
         pad(date.getMonth() + 1) + "-" +
-        pad(date.getDate())
-    );
-}
-
-function formatTimeForInput(date) {
-    const pad = (n) => String(n).padStart(2, "0");
-
-    return (
+        pad(date.getDate()) + "T" +
         pad(date.getHours()) + ":" +
-        pad(date.getMinutes()) + ":" +
-        pad(date.getSeconds())
+        pad(date.getMinutes())
     );
-}
-
-function combineDateAndTime(dateStr, timeStr) {
-    if (!dateStr || !timeStr) return null;
-    return new Date(`${dateStr}T${timeStr}`);
 }
 
 // ================================
@@ -183,10 +182,24 @@ function renderDateTime(containerId, date) {
         date.toLocaleDateString();
 }
 
+function syncInputsFromState() {
+
+    startDateInput.value = formatForDatetimeLocal(state.startDate);
+
+    totalStepsValue.textContent = state.totalSteps;
+    completedStepsValue.textContent = state.completedSteps;
+
+    totalStepsInput.value = state.totalSteps;
+    completedStepsInput.value = state.completedSteps;
+
+}
+
 function render() {
     const estimation = calculateEstimation(state);
     updateUIState();
     saveState(state);
+
+    syncInputsFromState();
 
     if (!estimation) {
         document.getElementById("elapsedDuration").textContent = "⏱ —";
@@ -237,39 +250,6 @@ const measureNowButton = document.getElementById("measureNowButton");
 
 const startProcessButton = document.getElementById("startProcessButton");
 const resetProcessButton = document.getElementById("resetProcessButton");
-
-// ================================
-// Sync helpers
-// ================================
-
-function syncInputsFromState() {
-    if (state.startDate) {
-        startDateInput.value = state.startDate
-            .toISOString()
-            .slice(0, 16); // yyyy-MM-ddTHH:mm
-    } else {
-        startDateInput.value = "";
-    }
-
-    totalStepsValue.textContent = state.totalSteps;
-    completedStepsValue.textContent = state.completedSteps;
-
-    totalStepsInput.value = state.totalSteps;
-    completedStepsInput.value = state.completedSteps;
-}
-
-function updateStartDateFromInputs() {
-    const combined = combineDateAndTime(
-        startDateInput.value,
-        startTimeInput.value
-    );
-
-    if (!combined || isNaN(combined)) {
-        return;
-    }
-
-    state.startDate = combined;
-}
 
 // ================================
 // Autorepeat helper
@@ -325,27 +305,13 @@ function attachRepeatingPress(
 // ================================
 
 startDateInput.addEventListener("change", () => {
-    if (!startDateInput.value) {
-        state.startDate = null;
-        return;
-    }
-
-    const selectedDate = new Date(startDateInput.value);
-
-    if (isNaN(selectedDate.getTime())) {
-        state.startDate = null;
-        return;
-    }
-
-    state.startDate = selectedDate;
-    syncInputsFromState();
+    state.startDate = parseLocalDateTime(startDateInput.value);
     render();
 });
 
 totalStepsInput.addEventListener("input", () => {
     const value = Number(totalStepsInput.value);
     state.totalSteps = value;
-    syncInputsFromState();
     render();
 });
 
@@ -353,19 +319,16 @@ completedStepsInput.addEventListener("input", () => {
     const value = Number(completedStepsInput.value);
     state.completedSteps = value;
     state.lastMeasurementDate = new Date();
-    syncInputsFromState();
     render();
 });
 
 attachRepeatingPress(addTotalStepsButton, () => {
     updateSteps("total", Number(incTotalSteps.value));
-    syncInputsFromState();
     render();
 });
 
 attachRepeatingPress(subTotalStepsButton, () => {
     updateSteps("total", - Number(incTotalSteps.value));
-    syncInputsFromState();
     render();
 });
 
@@ -373,32 +336,27 @@ resetTotalStepsButton.addEventListener("click", () => {
     state.totalSteps = 0;
     state.completedSteps = 0;
     state.lastMeasurementDate = new Date();
-    syncInputsFromState();
     render();
 });
 
 attachRepeatingPress(addCompletedStepsButton, () => {
     updateSteps("completed", Number(incCompletedSteps.value));
-    syncInputsFromState();
     render();
 });
 
 attachRepeatingPress(subCompletedStepsButton, () => {
     updateSteps("completed", - Number(incCompletedSteps.value));
-    syncInputsFromState();
     render();
 });
 
 resetCompletedStepsButton.addEventListener("click", () => {
     state.completedSteps = 0;
     state.lastMeasurementDate = new Date();
-    syncInputsFromState();
     render();
 });
 
 measureNowButton.addEventListener("click", () => {
     state.lastMeasurementDate = new Date();
-    syncInputsFromState();
     render();
 });
 
@@ -415,7 +373,6 @@ startProcessButton.addEventListener("click", () => {
 
     state.appState = APP_STATE.RUNNING;
     state.lastMeasurementDate = new Date(now);
-    syncInputsFromState();
     render();
 });
 
@@ -424,7 +381,6 @@ resetProcessButton.addEventListener("click", () => {
     state.completedSteps = 0;
     state.totalSteps = 0;
     state.startDate = null;
-    syncInputsFromState();
     render();
 });
 
