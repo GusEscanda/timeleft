@@ -30,11 +30,11 @@
     ================================ -->
     <section class="process-control">
         <div class="row controls">
-            <button id="startProcessButton" class="control primary block-setup">
+            <button type="button" id="startProcessButton" class="control primary block-setup" aria-label="Start process">
                 &#9654;
             </button>
 
-            <button id="resetProcessButton" class="control danger block-running">
+            <button type="button" id="resetProcessButton" class="control danger block-running" aria-label="Reset process">
                 &#8634;
             </button>
         </div>
@@ -72,8 +72,8 @@
             <!-- Total steps controls -->
             <div class="row controls">
                 <div class="controls-group">
-                    <button id="addTotalStepsButton" class="control">+</button>
-                    <button id="subTotalStepsButton" class="control">-</button>
+                    <button type="button" id="addTotalStepsButton" class="control" aria-label="Add to Total Work">+</button>
+                    <button type="button" id="subTotalStepsButton" class="control" aria-label="Sub from Total Work">-</button>
                     <span class="by">by</span>
                     <select id="incTotalSteps" class="control">
                         <option>1</option>
@@ -90,7 +90,7 @@
                     </select>
                 </div>
 
-                <button id="resetTotalStepsButton" class="control reset">⟲</button>
+                <button type="button" id="resetTotalStepsButton" class="control reset" aria-label="Reset Total Work">⟲</button>
             </div>
 
             <!-- Started earlier? -->
@@ -134,8 +134,8 @@
             <!-- Completed controls -->
             <div class="row controls">
                 <div class="controls-group">
-                    <button id="addCompletedStepsButton" class="control">+</button>
-                    <button id="subCompletedStepsButton" class="control">-</button>
+                    <button type="button" id="addCompletedStepsButton" class="control" aria-label="Add to Progress">+</button>
+                    <button type="button" id="subCompletedStepsButton" class="control" aria-label="Sub from Progress">-</button>
                     <span class="by">by</span>
                     <select id="incCompletedSteps" class="control">
                         <option>1</option>
@@ -152,19 +152,19 @@
                     </select>
                 </div>
 
-                <button id="resetCompletedStepsButton" class="control reset">⟲</button>
+                <button type="button" id="resetCompletedStepsButton" class="control reset" aria-label="Reset Progress">⟲</button>
             </div>
 
-            <!-- Last measurement -->
+            <!-- Last progress update -->
             <div class="row">
                 <label>Last update</label>
 
-                <div id="lastMeasurementDate" class="datetime value-primary">
+                <div id="lastProgressUpdate" class="datetime value-primary">
                     <div class="time">—</div>
                     <div class="date">—</div>
                 </div>
 
-                <button id="measureNowButton" class="control">Now</button>
+                <button type="button" id="markProgressButton" class="control" aria-label="Set last progress time">Now</button>
             </div>
 
             <!-- Remaining -->

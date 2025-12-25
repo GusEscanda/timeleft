@@ -36,6 +36,12 @@ body {
     color: var(--text);
 }
 
+input,
+button,
+select {
+    font-size: 1rem;
+}
+
 /* =========================================================
    APP LAYOUT
 ========================================================= */
@@ -69,10 +75,7 @@ body {
 }
 
 .section {
-    background: var(--card-bg);
-    border-radius: var(--radius);
     padding: 16px;
-
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -83,28 +86,24 @@ body {
     text-align: center;
 }
 
-/* =====================================
-   PROCESS CONTROL BUTTONS
-===================================== */
+/* =========================================================
+   PROCESS CONTROL
+========================================================= */
 
 .process-control {
-    margin-top: 0;
-    margin-bottom: 0;
+    margin: 0;
     padding: 0;
     display: flex;
-    justify-content: right;
+    justify-content: flex-end;
 }
 
 .process-control .row {
     margin: 0;
 }
 
+/* Bigger buttons for main process controls */
 .process-control .control {
-    padding: 6px 12px;
-}
-
-.process-control .control {
-    height: 54px;              /* ~50% más grande */
+    height: 54px;
     min-width: 54px;
     padding: 0 18px;
 
@@ -113,39 +112,25 @@ body {
 
     border-color: var(--muted);
     color: var(--text);
-    background: var(--card-bg);
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.02),
+        rgba(0,0,0,0.06)
+    );
 }
 
-/* Estado activo (cuando corresponde) */
-.process-control .block-setup,
-.process-control .block-running {
-    opacity: 1;
-}
-
-/* Estado inactivo (ya lo tenías definido) */
-.is-setup .block-running,
-.is-running .block-setup {
-    opacity: 0.35;
-    pointer-events: none;
-}
-
-/* Hover sutil (desktop only) */
+/* Hover only on desktop */
 @media (hover: hover) {
     .process-control .control:hover {
         background: rgba(0, 0, 0, 0.04);
     }
 }
 
-
 /* =========================================================
    APP STATES
 ========================================================= */
 
-.is-setup .block-running {
-    opacity: 0.4;
-    pointer-events: none;
-}
-
+.is-setup .block-running,
 .is-running .block-setup {
     opacity: 0.4;
     pointer-events: none;
@@ -286,12 +271,6 @@ input[type="number"] {
 /* =========================================================
    FORM CONTROLS
 ========================================================= */
-
-input,
-button,
-select {
-    font-size: 1rem;
-}
 
 input {
     padding: 8px;
@@ -436,7 +415,7 @@ input {
 }
 
 .feedback.success {
-    background: var(--accent);
+    background: #444;
     color: white;
 }
 
@@ -461,7 +440,7 @@ input {
 
 @keyframes pulse {
     0%   { transform: scale(1); }
-    50%  { transform: scale(1.16); }
+    50%  { transform: scale(1.10); }
     100% { transform: scale(1); }
 }
 
@@ -471,9 +450,9 @@ input {
 
 @keyframes shake-inline {
     0%   { transform: translateX(0); }
-    25%  { transform: translateX(-6px); }
-    50%  { transform: translateX(6px); }
-    75%  { transform: translateX(-4px); }
+    25%  { transform: translateX(-8px); }
+    50%  { transform: translateX(8px); }
+    75%  { transform: translateX(-6px); }
     100% { transform: translateX(0); }
 }
 
@@ -482,6 +461,6 @@ input {
 }
 
 .error-flash {
-    color: #c33;
+    background: #c33;
 }
 

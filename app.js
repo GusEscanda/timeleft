@@ -6,7 +6,7 @@
 
 import * as feedback from "./feedback.js";
 
-const STATE_VERSION = 0.91;
+const STATE_VERSION = 0.97;
 const STORAGE_KEY = "timeleft-state";
 
 const APP_STATE = {
@@ -19,7 +19,7 @@ function saveState(state) {
         version: STATE_VERSION,
         state: {
             startDate: state.startDate ? state.startDate.toISOString() : null,
-            lastMeasurementDate: state.lastMeasurementDate ? state.lastMeasurementDate.toISOString() : null,
+            lastProgressUpdate: state.lastProgressUpdate ? state.lastProgressUpdate.toISOString() : null,
             totalSteps: state.totalSteps,
             completedSteps: state.completedSteps,
             appState: state.appState
@@ -32,7 +32,7 @@ function saveState(state) {
 function createDefaultState() {
     return {
         startDate: null,
-        lastMeasurementDate: null,
+        lastProgressUpdate: null,
         totalSteps: 0,
         completedSteps: 0,
         appState: APP_STATE.SETUP
@@ -53,7 +53,7 @@ function loadOrInitState() {
 
         return {
             startDate: parsed.state.startDate ? new Date(parsed.state.startDate) : null,
-            lastMeasurementDate: parsed.state.lastMeasurementDate ? new Date(parsed.state.lastMeasurementDate) : null,
+            lastProgressUpdate: parsed.state.lastProgressUpdate ? new Date(parsed.state.lastProgressUpdate) : null,
             totalSteps: parsed.state.totalSteps,
             completedSteps: parsed.state.completedSteps,
             appState: parsed.state.appState
@@ -79,17 +79,17 @@ function calculateEstimation(state) {
             state.totalSteps > 0 && 
             state.completedSteps > 0 && 
             state.completedSteps < state.totalSteps && 
-            state.startDate < state.lastMeasurementDate;
+            state.startDate < state.lastProgressUpdate;
 
         if (!isValidState) {
             return null;
         }
 
-        const elapsedDurationMs = state.lastMeasurementDate - state.startDate;
+        const elapsedDurationMs = state.lastProgressUpdate - state.startDate;
         const totalDurationMs = state.totalSteps * elapsedDurationMs / state.completedSteps;
         const remainingSteps = state.totalSteps - state.completedSteps;
         const remainingDurationMs = totalDurationMs - elapsedDurationMs;
-        const estimatedEndDate = new Date(state.lastMeasurementDate.getTime() + remainingDurationMs);
+        const estimatedEndDate = new Date(state.lastProgressUpdate.getTime() + remainingDurationMs);
 
         return {
             elapsedDurationMs,
@@ -119,7 +119,7 @@ function updateCompletedSteps(btnElem, delta) {
     state.completedSteps = state.completedSteps + delta;
     state.completedSteps = Math.max(state.completedSteps, 0);
     state.completedSteps = Math.min(state.completedSteps, state.totalSteps);
-    state.lastMeasurementDate = new Date();
+    state.lastProgressUpdate = new Date();
     if (prev_value != state.completedSteps) {
         feedback.pulse(btnElem);
     } else {
@@ -220,7 +220,7 @@ function render() {
         document.getElementById("totalDuration").textContent = "⏱ —";
         document.getElementById("remainingSteps").textContent = "—";
         document.getElementById("remainingDuration").textContent = "⏱ —";
-        renderDateTime("lastMeasurementDate", null);
+        renderDateTime("lastProgressUpdate", null);
         renderDateTime("estimatedEndDate", null);
         return;
     }
@@ -237,7 +237,7 @@ function render() {
     document.getElementById("remainingDuration").textContent =
         formatDuration(estimation.remainingDurationMs);
 
-    renderDateTime("lastMeasurementDate", state.lastMeasurementDate);
+    renderDateTime("lastProgressUpdate", state.lastProgressUpdate);
     renderDateTime("estimatedEndDate", estimation.estimatedEndDate);
 }
 
@@ -260,7 +260,7 @@ const subCompletedStepsButton = document.getElementById("subCompletedStepsButton
 const resetCompletedStepsButton = document.getElementById("resetCompletedStepsButton");
 const incCompletedSteps = document.getElementById("incCompletedSteps");
 
-const measureNowButton = document.getElementById("measureNowButton");
+const markProgressButton = document.getElementById("markProgressButton");
 
 const startProcessButton = document.getElementById("startProcessButton");
 const resetProcessButton = document.getElementById("resetProcessButton");
@@ -332,7 +332,7 @@ totalStepsInput.addEventListener("input", () => {
 completedStepsInput.addEventListener("input", () => {
     const value = Number(completedStepsInput.value);
     state.completedSteps = value;
-    state.lastMeasurementDate = new Date();
+    state.lastProgressUpdate = new Date();
     render();
 });
 
@@ -349,7 +349,7 @@ attachRepeatingPress(subTotalStepsButton, () => {
 resetTotalStepsButton.addEventListener("click", () => {
     state.totalSteps = 0;
     state.completedSteps = 0;
-    state.lastMeasurementDate = new Date();
+    state.lastProgressUpdate = new Date();
     feedback.pulse(resetTotalStepsButton);
     render();
 });
@@ -366,14 +366,14 @@ attachRepeatingPress(subCompletedStepsButton, () => {
 
 resetCompletedStepsButton.addEventListener("click", () => {
     state.completedSteps = 0;
-    state.lastMeasurementDate = new Date();
+    state.lastProgressUpdate = new Date();
     feedback.pulse(resetCompletedStepsButton);
     render();
 });
 
-measureNowButton.addEventListener("click", () => {
-    state.lastMeasurementDate = new Date();
-    feedback.pulse(measureNowButton);
+markProgressButton.addEventListener("click", () => {
+    state.lastProgressUpdate = new Date();
+    feedback.pulse(markProgressButton);
     render();
 });
 
@@ -397,7 +397,7 @@ startProcessButton.addEventListener("click", () => {
     }
 
     state.appState = APP_STATE.RUNNING;
-    state.lastMeasurementDate = new Date(now);
+    state.lastProgressUpdate = new Date(now);
     feedback.pulse(startProcessButton);
     feedback.success("Process started");
     render();

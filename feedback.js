@@ -25,7 +25,7 @@ function show(message, type = "info", duration = 1200) {
 ========================= */
 
 export function error(msg) {
-    show(msg, "error", 1600);
+    show(msg, "error", 1800);
 }
 
 export function success(msg) {
