@@ -39,6 +39,13 @@ function createDefaultState() {
     };
 }
 
+/**
+ * Loads the persisted application state from localStorage.
+ * If the stored version does not match the current STATE_VERSION,
+ * or if parsing fails, a fresh default state is returned.
+ *
+ * @returns {Object} Application state object.
+ */
 function loadOrInitState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
@@ -73,6 +80,20 @@ const state = loadOrInitState();
 // Pure logic
 // ================================
 
+/**
+ * Calculates time estimations based on current progress.
+ *
+ * Returns null if the state is invalid (e.g. no progress yet,
+ * missing dates, or inconsistent values).
+ *
+ * @param {Object} state - Current application state.
+ * @returns {Object|null} Estimation data:
+ *  - elapsedDurationMs
+ *  - totalDurationMs
+ *  - remainingSteps
+ *  - remainingDurationMs
+ *  - estimatedEndDate
+ */
 function calculateEstimation(state) {
     try {
         const isValidState = 
@@ -103,6 +124,13 @@ function calculateEstimation(state) {
     }
 }
 
+/**
+ * Updates totalSteps by a delta value.
+ * Ensures the value never goes below zero and provides visual feedback.
+ *
+ * @param {HTMLElement} btnElem - Button triggering the update.
+ * @param {number} delta - Amount to add (or subtract).
+ */
 function updateTotalSteps(btnElem, delta) {
     const prev_value = state.totalSteps;
     state.totalSteps = state.totalSteps + delta;
@@ -114,6 +142,14 @@ function updateTotalSteps(btnElem, delta) {
     }
 }
 
+/**
+ * Updates completedSteps by a delta value.
+ * Ensures the value stays within [0, totalSteps] and updates
+ * the last progress timestamp.
+ *
+ * @param {HTMLElement} btnElem - Button triggering the update.
+ * @param {number} delta - Amount to add (or subtract).
+ */
 function updateCompletedSteps(btnElem, delta) {
     const prev_value = state.completedSteps;
     state.completedSteps = state.completedSteps + delta;
@@ -132,6 +168,12 @@ function updateCompletedSteps(btnElem, delta) {
 // Formatting
 // ================================
 
+/**
+ * Formats a duration in milliseconds into HH:MM:SS format.
+ *
+ * @param {number} ms - Duration in milliseconds.
+ * @returns {string} Formatted duration or placeholder if invalid.
+ */
 function formatDuration(ms) {
     if (ms < 0) return "⏱ —";
 
@@ -146,6 +188,12 @@ function formatDuration(ms) {
     return `⏱ ${hours}:${pad(minutes)}:${pad(seconds)}`;
 }
 
+/**
+ * Parses a datetime-local input value into a Date object.
+ *
+ * @param {string} value - Value from a datetime-local input.
+ * @returns {Date|null} Parsed Date or null if empty.
+ */
 function parseLocalDateTime(value) {
     if (!value) return null;
 
@@ -156,6 +204,12 @@ function parseLocalDateTime(value) {
     return new Date(year, month - 1, day, hour, minute);
 }
 
+/**
+ * Formats a Date object for use in a datetime-local input.
+ *
+ * @param {Date|null} date
+ * @returns {string} Formatted datetime string or empty string.
+ */
 function formatForDatetimeLocal(date) {
     if (!date) return "";
 
@@ -174,12 +228,28 @@ function formatForDatetimeLocal(date) {
 // Render
 // ================================
 
+/**
+ * Updates global UI mode by toggling CSS classes on <body>.
+ *
+ * The UI has two mutually exclusive modes:
+ * - "setup": initial configuration screen
+ * - "running": active progress tracking
+ *
+ * Visual changes are handled entirely via CSS using
+ * `.is-setup` and `.is-running` classes.
+ */
 function updateUIState() {
     const isSetup = state.appState === APP_STATE.SETUP;
     document.body.classList.toggle("is-setup", isSetup);
     document.body.classList.toggle("is-running", !isSetup);
 }
 
+/**
+ * Renders a date and time inside a container element.
+ *
+ * @param {string} containerId - Element id containing .date and .time nodes.
+ * @param {Date|null} date - Date to render.
+ */
 function renderDateTime(containerId, date) {
     const container = document.getElementById(containerId);
 
@@ -208,6 +278,10 @@ function syncInputsFromState() {
 
 }
 
+/**
+ * Renders the entire UI based on the current state.
+ * Includes saving state, updating metrics and refreshing UI elements.
+ */
 function render() {
     const estimation = calculateEstimation(state);
     updateUIState();
@@ -269,6 +343,19 @@ const resetProcessButton = document.getElementById("resetProcessButton");
 // helpers
 // ================================
 
+/**
+ * Attaches a press-and-hold behavior to a button.
+ * The callback is triggered repeatedly with acceleration
+ * while the button is pressed.
+ *
+ * @param {HTMLElement} button
+ * @param {Function} callback
+ * @param {Object} options
+ * @param {number} options.initialDelay - Delay before repeating starts.
+ * @param {number} options.repeatDelay - Initial repeat interval.
+ * @param {number} options.minDelay - Fastest allowed interval.
+ * @param {number} options.acceleration - Speed multiplier per step.
+ */
 function attachRepeatingPress(
     button,
     callback,
