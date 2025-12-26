@@ -1,6 +1,10 @@
 # TimeLeft
 
-🇬🇧 English version (versión en español arriba)
+<div align="right">
+
+🇪🇸 Versión en español: [README_ES.md](README_ES.md)
+
+</div>
 
 TimeLeft is a small web application to estimate how much time remains to complete a task based on real progress so far.
 
