@@ -276,6 +276,18 @@ input {
     width: 100%;
 }
 
+/* Remove number input arrows (desktop browsers) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
 .control {
     height: 36px;
     min-width: 36px;
