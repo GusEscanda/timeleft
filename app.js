@@ -6,7 +6,7 @@
 
 import * as feedback from "./feedback.js";
 
-const STATE_VERSION = 1.3;
+const STATE_VERSION = 1.4;
 const STORAGE_KEY = "timeleft-state";
 
 const APP_STATE = {
