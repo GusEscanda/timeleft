@@ -319,8 +319,8 @@ input[type="number"] {
 .steps-value {
     font-family: monospace;
     font-size: 1.4rem;
-    text-align: right;
-    padding-right: 6px;
+    text-align: center;
+    caret-color: transparent;
 }
 
 /* Started earlier */

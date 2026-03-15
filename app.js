@@ -339,6 +339,13 @@ const markProgressButton = document.getElementById("markProgressButton");
 const startProcessButton = document.getElementById("startProcessButton");
 const resetProcessButton = document.getElementById("resetProcessButton");
 
+totalStepsInput.addEventListener("focus", (e) => {
+    e.target.select();
+});
+completedStepsInput.addEventListener("focus", (e) => {
+    e.target.select();
+});
+
 // ================================
 // helpers
 // ================================
