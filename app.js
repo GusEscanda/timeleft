@@ -516,3 +516,12 @@ syncInputsFromState();
 render();
 
 document.getElementById("appVersion").textContent = STATE_VERSION;
+
+const appUrlLink = document.getElementById("appUrlLink");
+
+if (appUrlLink) {
+    const url = window.location.origin;
+    appUrlLink.href = url;
+    appUrlLink.textContent = url;
+}
+
