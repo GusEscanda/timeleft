@@ -224,12 +224,11 @@ input[type="number"] {
 }
 
 @media (pointer: coarse) {
-    .metric-value {
-        display: block;
-    }
-
     input[type="number"] {
-        display: none;
+        display: block;
+        font-family: monospace;
+        font-size: 1.4rem;
+        font-weight: 600;
     }
 }
 
@@ -304,8 +303,8 @@ input {
     opacity: 1;
 }
 
-/* Steps input */
-.steps-input {
+/* Steps value */
+.steps-value {
     font-family: monospace;
     font-size: 1.4rem;
     text-align: right;
